@@ -61,56 +61,59 @@ export const REASON_CATEGORIES = [
 ];
 
 /* ------------------------------------------------------------------ *
- * Tenant: Vinted
+ * Tenant: Nutrameg
  * ------------------------------------------------------------------ */
 
-export const vintedBrand = {
-  id: 'vinted',
-  name: 'Vinted',
+export const nutramegBrand = {
+  id: 'nutrameg',
+  name: 'Nutrameg',
   productName: 'Dispute Console',
-  legalName: 'Vinted UAB',
-  shortName: 'VIN',
-  tagline: 'Chargebacks and Buyer Protection claims in one operational queue.',
-  supportEmail: 'disputes@vinted.example',
-  emailDomain: 'vinted.example',
+  legalName: 'Nutrameg SIA',
+  shortName: 'NUT',
+  tagline: 'Chargebacks and member claims in one operational queue.',
+  supportEmail: 'disputes@nutrameg.example',
+  emailDomain: 'nutrameg.example',
 
   /** Path only — never imported into a component. Served from /public. */
-  logo: '/tenant-vinted.svg',
+  logo: '/tenant-nutrameg.svg',
 
-  wordmark: { text: 'Vinted', accent: 'Console', weight: 700 },
+  wordmark: { text: 'Nutrameg', accent: 'Console', weight: 700 },
 
-  /* --- Palette ---------------------------------------------------------- */
+  /* --- Palette ---------------------------------------------------------- *
+   * A warm spiced amber (nutmeg) rather than the reference's teal or the
+   * second tenant's navy — kept distinct on purpose so a screenshot never
+   * gets mistaken for another tenant. */
   colors: {
-    primary: '#007782',
-    primaryDeep: '#00565E',
-    primaryTint: '#E4F1F1',
-    primaryWash: '#F3F9F9',
+    primary: '#A85C2A',
+    primaryDeep: '#7A3F17',
+    primaryTint: '#F5E8DC',
+    primaryWash: '#FBF5EF',
 
     /* Nav rail is its own token pair: dark for this tenant, but a light-chrome
        tenant swaps these without touching a component. */
-    navRail: '#04343A',
-    navRailDeep: '#022A2F',
-    navActive: '#00A0AD',
-    navInk: '#D6E7E8',
-    navInkMuted: '#7FA0A4',
+    navRail: '#2B1B12',
+    navRailDeep: '#1D1109',
+    navActive: '#C97A3D',
+    navInk: '#EDE0D3',
+    navInkMuted: '#A68868',
 
-    ink: '#0B2E32',
-    inkMuted: '#5A7377',
-    inkSubtle: '#8CA3A6',
-    canvas: '#F2F5F5',
+    ink: '#2B1B12',
+    inkMuted: '#6B5A4A',
+    inkSubtle: '#9C8873',
+    canvas: '#F7F3EE',
     surface: '#FFFFFF',
-    surfaceSunken: '#F7FAFA',
-    line: '#DCE7E7',
-    lineStrong: '#BFD3D3',
+    surfaceSunken: '#FBF8F4',
+    line: '#E8DFD3',
+    lineStrong: '#D3C5B2',
 
-    success: '#0F7B4F',
-    successTint: '#E4F4EC',
-    warning: '#9A5B00',
+    success: '#1F8A55',
+    successTint: '#E3F5EA',
+    warning: '#9A6B00',
     warningTint: '#FBF0DD',
     danger: '#B3261E',
     dangerTint: '#FBE9E7',
-    info: '#3F51B5',
-    infoTint: '#ECEEFB',
+    info: '#3B6EA5',
+    infoTint: '#EAF1F8',
 
     schemeVisa: '#1A1F71',
     schemeMastercard: '#C8102E',
@@ -118,7 +121,7 @@ export const vintedBrand = {
   },
 
   /* --- Chart ramp ------------------------------------------------------- *
-   * ONE HUE PLUS TINTS, not a rainbow. Five steps of the brand teal from the
+   * ONE HUE PLUS TINTS, not a rainbow. Five steps of the brand amber from the
    * deep rail colour to a pale tint, plus a single contrast colour reserved
    * for the "other" bucket and for negative series (rejected, lost, failed).
    *
@@ -129,17 +132,21 @@ export const vintedBrand = {
    *
    * Assign in fixed order and never cycle. A sixth category folds into
    * "Other" and takes chartContrast. */
-  chartSeries: ['#007782', '#00A0AD', '#6FC5C9', '#B9E0E1', '#04343A'],
+  chartSeries: ['#A85C2A', '#C97A3D', '#DBA46E', '#EEDAC0', '#2B1B12'],
   chartContrast: '#B3261E',
-  chartNeutral: '#6B7F82',
+  chartNeutral: '#8A7A68',
 
   /* --- Money, locale, markets ------------------------------------------- */
   currency: 'EUR',
   locale: 'en-GB',
-  timezone: 'Europe/Vilnius',
-  markets: ['FR', 'DE', 'LT', 'PL', 'ES', 'IT', 'NL', 'BE', 'CZ', 'SK'],
+  timezone: 'Europe/Riga',
+  markets: ['LV', 'DE', 'FR', 'GB', 'ES', 'IT', 'US', 'PL'],
 
-  /* --- Vocabulary -------------------------------------------------------- */
+  /* --- Vocabulary -------------------------------------------------------- *
+   * Nutrameg is a direct-to-member health/nutrition subscription, not a
+   * peer marketplace, so the marketplace-shaped nouns are remapped the same
+   * way the PriceLine tenant remaps them for travel: same domain model,
+   * different words. */
   terms: {
     case: 'case',
     cases: 'cases',
@@ -147,26 +154,26 @@ export const vintedBrand = {
     chargebacks: 'chargebacks',
     claim: 'claim',
     claims: 'claims',
-    claimProgramme: 'Buyer Protection',
-    buyer: 'buyer',
-    seller: 'seller',
-    order: 'order',
-    item: 'item',
+    claimProgramme: 'Member Protection',
+    buyer: 'member',
+    seller: 'coach',
+    order: 'subscription',
+    item: 'plan',
     entity: 'entity',
     analyst: 'Dispute Specialist',
     analysts: 'Dispute Specialists',
     queue: 'queue',
-    marketplace: 'marketplace',
+    marketplace: 'platform',
   },
 
   /** Case-ID numbering, editable from System preferences. */
-  numbering: { prefix: 'VIN', separator: '-', digits: 6, nextSequence: 720000 },
+  numbering: { prefix: 'NUT', separator: '-', digits: 6, nextSequence: 810000 },
 
   /* --- Entities ----------------------------------------------------------- */
   entities: [
-    { id: 'vinted', label: 'Vinted', descriptor: 'Consumer marketplace', mid: '5411900021' },
-    { id: 'vinted_pro', label: 'Vinted Pro', descriptor: 'Professional sellers', mid: '5411900074' },
-    { id: 'vinted_go', label: 'Vinted Go', descriptor: 'Logistics and drop-off', mid: '5411900135' },
+    { id: 'nutrameg', label: 'Nutrameg', descriptor: 'Core nutrition app', mid: '8099100021' },
+    { id: 'nutrameg_coach', label: 'Nutrameg Coach', descriptor: '1:1 coaching add-on', mid: '8099100074' },
+    { id: 'nutrameg_clinical', label: 'Nutrameg Clinical', descriptor: 'Clinical and prescription programme', mid: '8099100135' },
   ],
 
   /* --- Card schemes -------------------------------------------------------- */
@@ -186,43 +193,45 @@ export const vintedBrand = {
     { id: 'rfi', label: 'RFI', short: 'RFI' },
   ],
 
-  /** Buyer Protection claim reasons — the non-card intake path. */
+  /** Member Protection claim reasons — the non-card intake path. */
   claimReasons: [
-    { id: 'not_as_described', label: 'Not as described', category: 'consumer' },
-    { id: 'never_arrived', label: 'Never arrived', category: 'consumer' },
-    { id: 'counterfeit', label: 'Counterfeit', category: 'fraud' },
-    { id: 'damaged', label: 'Damaged', category: 'consumer' },
-    { id: 'wrong_item', label: 'Wrong item', category: 'consumer' },
+    { id: 'not_as_described', label: 'Plan not as advertised', category: 'consumer' },
+    { id: 'never_arrived', label: 'Subscription never activated', category: 'consumer' },
+    { id: 'counterfeit', label: 'Unauthorised recurring charge', category: 'fraud' },
+    { id: 'damaged', label: 'Coaching not delivered as promised', category: 'consumer' },
+    { id: 'wrong_item', label: 'Charged after cancellation', category: 'consumer' },
   ],
 
-  paymentMethods: ['Card', 'Wallet balance', 'PayPal', 'Apple Pay', 'Google Pay', 'iDEAL', 'Bancontact'],
+  paymentMethods: ['Card', 'Apple Pay', 'Google Pay', 'PayPal', 'App Store', 'Google Play'],
 
   mccs: [
-    { code: '5691', label: "Men's and Women's Clothing Stores" },
-    { code: '5651', label: 'Family Clothing Stores' },
-    { code: '5948', label: 'Luggage and Leather Goods' },
-    { code: '5944', label: 'Jewellery and Watches' },
-    { code: '5699', label: 'Miscellaneous Apparel and Accessories' },
+    { code: '8099', label: 'Health Practitioners and Medical Services' },
+    { code: '7372', label: 'Computer Software Stores' },
+    { code: '5122', label: 'Drugs, Drug Proprietary and Druggists Sundries' },
+    { code: '8011', label: 'Doctors — Physicians' },
+    { code: '7298', label: 'Health and Beauty Spas' },
   ],
 
-  acquirers: ['Adyen', 'Worldline', 'Checkout.com'],
+  acquirers: ['Adyen', 'Stripe', 'Checkout.com'],
 
-  /* --- Queues -------------------------------------------------------------- */
+  /* --- Queues -------------------------------------------------------------- *
+   * Queue ids are shared across tenants by design (data/cases.js routes into
+   * them by id) — only the label and description change here. */
   queues: [
     { id: 'all_chargebacks', label: 'All Chargebacks', description: 'Landing queue for every inbound chargeback.', sla: 24 },
-    { id: 'buyer_protection', label: 'Buyer Protection', description: 'Marketplace claims with no card leg.', sla: 72 },
+    { id: 'buyer_protection', label: 'Member Protection', description: 'Subscription claims with no card leg.', sla: 72 },
     { id: 'second_cycle', label: '2nd Cycle Chargeback', description: 'Second presentments and pre-arbitration.', sla: 16 },
     { id: 'high_value', label: 'High Value Disputes', description: 'Cases above the configured risk amount.', sla: 24 },
-    { id: 'counterfeit', label: 'Counterfeit and IP', description: 'Authenticity escalations and brand referrals.', sla: 36 },
-    { id: 'not_received', label: 'Item Not Received', description: 'Non-receipt across both intake paths.', sla: 48 },
-    { id: 'logistics', label: 'Logistics Review', description: 'Tracking and drop-off evidence.', sla: 48 },
+    { id: 'counterfeit', label: 'Unauthorised Charges', description: 'Fraud and unauthorised-signup escalations.', sla: 36 },
+    { id: 'not_received', label: 'Subscription Not Activated', description: 'Non-activation across both intake paths.', sla: 48 },
+    { id: 'logistics', label: 'Onboarding Review', description: 'Signup and activation evidence.', sla: 48 },
     { id: 'supervisor', label: 'Supervisor', description: 'Cases escalated to a supervisor.', sla: 12 },
     { id: 'no_docs', label: 'No Documents Available', description: 'Cases where evidence was never delivered.', sla: 48 },
   ],
 
   assignmentReasons: [
     { id: 'review_resolve', label: 'Review and Resolve Dispute', description: 'Standard review of an inbound dispute.' },
-    { id: 'merchant_docs', label: 'Seller Docs Received', description: 'Seller evidence has arrived and needs assessment.' },
+    { id: 'merchant_docs', label: 'Coach Docs Received', description: 'Coach documentation has arrived and needs assessment.' },
     { id: 'timeframe', label: 'Potential Timeframe Breach', description: 'Approaching or past the scheme deadline.' },
     { id: 'inbound', label: 'Inbound Correspondence', description: 'New correspondence attached to the case.' },
     { id: 'zero_doc', label: '1st CB with 0 Doc Indicator', description: 'First chargeback arrived with no documents.' },
@@ -251,14 +260,14 @@ export const vintedBrand = {
 
   /* --- Consolidation ------------------------------------------------------- *
    * Minimums are deliberately asymmetric. Two disputes on one card is already
-   * a signal; two against one seller is just a seller with volume — hence
+   * a signal; two against one coach is just a coach with volume — hence
    * three, open-only, inside 30 days. Tuned loosely this flagged 60% then 28%
    * of the book, at which point the flag carries no information. Target 10-15%. */
   consolidation: {
     rules: [
       { id: 'same_card', label: 'Same card', minSize: 2, windowDays: 90, openOnly: false, description: 'Multiple disputes presented on one PAN.' },
-      { id: 'same_order', label: 'Same order', minSize: 2, windowDays: 120, openOnly: false, description: 'One order disputed more than once, including across intake paths.' },
-      { id: 'same_seller', label: 'Same seller', minSize: 3, windowDays: 30, openOnly: true, description: 'A cluster of open disputes against one seller inside 30 days.' },
+      { id: 'same_order', label: 'Same subscription', minSize: 2, windowDays: 120, openOnly: false, description: 'One subscription disputed more than once, including across intake paths.' },
+      { id: 'same_seller', label: 'Same coach', minSize: 3, windowDays: 30, openOnly: true, description: 'A cluster of open disputes against one coach inside 30 days.' },
     ],
   },
 
@@ -274,7 +283,7 @@ export const vintedBrand = {
     help: true,
   },
 
-  demoCredentials: { username: 'VintedDemo', password: 'Changeme123' },
+  demoCredentials: { username: 'NutramegDemo', password: 'Changeme123' },
 };
 
 /* ------------------------------------------------------------------ *
@@ -282,7 +291,7 @@ export const vintedBrand = {
  * ------------------------------------------------------------------ */
 
 export const pricelineBrand = {
-  ...vintedBrand,
+  ...nutramegBrand,
   id: 'priceline',
   name: 'PriceLine',
   legalName: 'PriceLine Payments Ltd',
@@ -294,7 +303,7 @@ export const pricelineBrand = {
   wordmark: { text: 'PriceLine', accent: 'Console', weight: 700 },
 
   colors: {
-    ...vintedBrand.colors,
+    ...nutramegBrand.colors,
     primary: '#0F4C99',
     primaryDeep: '#0A3A76',
     primaryTint: '#E6EEF9',
@@ -324,7 +333,7 @@ export const pricelineBrand = {
   markets: ['US', 'CA', 'GB', 'DE', 'FR', 'ES', 'IT', 'AU'],
 
   terms: {
-    ...vintedBrand.terms,
+    ...nutramegBrand.terms,
     claim: 'booking claim',
     claims: 'booking claims',
     claimProgramme: 'Traveller Protection',
@@ -335,7 +344,7 @@ export const pricelineBrand = {
     marketplace: 'travel',
   },
 
-  numbering: { ...vintedBrand.numbering, prefix: 'PRL', nextSequence: 440000 },
+  numbering: { ...nutramegBrand.numbering, prefix: 'PRL', nextSequence: 440000 },
 
   entities: [
     { id: 'priceline', label: 'PriceLine', descriptor: 'Consumer travel', mid: '4722100011' },
@@ -375,7 +384,7 @@ export const pricelineBrand = {
     { id: 'no_docs', label: 'No Documents Available', description: 'Cases where evidence was never delivered.', sla: 48 },
   ],
 
-  thresholds: { ...vintedBrand.thresholds, minimumProcessingAmount: 10, riskAmount: 500, routingHighValue: 900 },
+  thresholds: { ...nutramegBrand.thresholds, minimumProcessingAmount: 10, riskAmount: 500, routingHighValue: 900 },
 
   /** Its own, so the second tenant never shows the first tenant's username. */
   demoCredentials: { username: 'PriceLineDemo', password: 'Changeme123' },
@@ -385,9 +394,9 @@ export const pricelineBrand = {
  * Registry + lookups
  * ------------------------------------------------------------------ */
 
-export const TENANTS = { vinted: vintedBrand, priceline: pricelineBrand };
+export const TENANTS = { nutrameg: nutramegBrand, priceline: pricelineBrand };
 
-export const brand = TENANTS[import.meta.env?.VITE_TENANT] ?? vintedBrand;
+export const brand = TENANTS[import.meta.env?.VITE_TENANT] ?? nutramegBrand;
 
 export const allReasonCodes = (b = brand) =>
   b.schemes.flatMap((s) => s.reasonCodes.map((rc) => ({ ...rc, schemeId: s.id, schemeLabel: s.label })));

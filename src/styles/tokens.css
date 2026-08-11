@@ -2,51 +2,51 @@
    DESIGN TOKENS
    Colour variables (--c-*) are written at runtime by BrandProvider from
    brand.config.js. The values below are static fallbacks for the frame
-   before that effect runs. Keep them in sync with the Vinted tenant.
+   before that effect runs. Keep them in sync with the Nutrameg tenant.
    ============================================================ */
 
 :root {
-  --c-primary: #007782;
-  --c-primary-deep: #00565e;
-  --c-primary-tint: #e4f1f1;
-  --c-primary-wash: #f3f9f9;
+  --c-primary: #a85c2a;
+  --c-primary-deep: #7a3f17;
+  --c-primary-tint: #f5e8dc;
+  --c-primary-wash: #fbf5ef;
 
-  --c-nav-rail: #04343a;
-  --c-nav-rail-deep: #022a2f;
-  --c-nav-active: #00a0ad;
-  --c-nav-ink: #d6e7e8;
-  --c-nav-ink-muted: #7fa0a4;
+  --c-nav-rail: #2b1b12;
+  --c-nav-rail-deep: #1d1109;
+  --c-nav-active: #c97a3d;
+  --c-nav-ink: #ede0d3;
+  --c-nav-ink-muted: #a68868;
 
-  --c-ink: #0b2e32;
-  --c-ink-muted: #5a7377;
-  --c-ink-subtle: #8ca3a6;
-  --c-canvas: #f2f5f5;
+  --c-ink: #2b1b12;
+  --c-ink-muted: #6b5a4a;
+  --c-ink-subtle: #9c8873;
+  --c-canvas: #f7f3ee;
   --c-surface: #ffffff;
-  --c-surface-sunken: #f7fafa;
-  --c-line: #dce7e7;
-  --c-line-strong: #bfd3d3;
+  --c-surface-sunken: #fbf8f4;
+  --c-line: #e8dfd3;
+  --c-line-strong: #d3c5b2;
 
-  --c-success: #0f7b4f;
-  --c-success-tint: #e4f4ec;
-  --c-warning: #9a5b00;
+  --c-success: #1f8a55;
+  --c-success-tint: #e3f5ea;
+  --c-warning: #9a6b00;
   --c-warning-tint: #fbf0dd;
   --c-danger: #b3261e;
   --c-danger-tint: #fbe9e7;
-  --c-info: #3f51b5;
-  --c-info-tint: #eceefb;
+  --c-info: #3b6ea5;
+  --c-info-tint: #eaf1f8;
 
   --c-scheme-visa: #1a1f71;
   --c-scheme-mastercard: #c8102e;
   --c-scheme-amex: #016fd0;
 
   /* Validated categorical ramp — see brand.config.js for why this order */
-  --c-series-0: #007782;
-  --c-series-1: #00a0ad;
-  --c-series-2: #6fc5c9;
-  --c-series-3: #b9e0e1;
-  --c-series-4: #04343a;
+  --c-series-0: #a85c2a;
+  --c-series-1: #c97a3d;
+  --c-series-2: #dba46e;
+  --c-series-3: #eedac0;
+  --c-series-4: #2b1b12;
   --c-series-contrast: #b3261e;
-  --c-series-neutral: #6b7f82;
+  --c-series-neutral: #8a7a68;
 
   /* Type */
   --font-display: 'Plus Jakarta Sans', 'Inter', system-ui, sans-serif;

@@ -1,9 +1,9 @@
 {
-  "name": "vinted-dispute-console",
+  "name": "nutrameg-dispute-console",
   "private": true,
   "version": "1.0.0",
   "type": "module",
-  "description": "White-label dispute resolution console — Vinted demo tenant.",
+  "description": "White-label dispute resolution console — Nutrameg demo tenant.",
   "engines": {
     "node": ">=20"
   },

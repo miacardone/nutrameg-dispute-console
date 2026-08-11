@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Nutrameg">
+  <rect width="64" height="64" rx="16" fill="#A85C2A"/>
+  <path fill="#fff" d="M20 44V20h5.8l12.4 16.3V20H44v24h-5.8L25.8 27.7V44z"/>
+  <circle cx="47" cy="17" r="4.5" fill="#7FB88A"/>
+</svg>

@@ -1,7 +1,7 @@
 # Dispute Resolution Console
 
 A white-label dispute resolution console, rebuilt screen-for-screen from the
-DisputeLab platform with Vinted branding and data. A second tenant
+DisputeLab platform with Nutrameg branding and data. A second tenant
 (**PriceLine**) ships in the same codebase and generates a complete dataset, not
 just a recoloured chrome.
 
@@ -15,7 +15,7 @@ npm run build        # production build to dist/
 npm run preview      # serve the built output
 ```
 
-**Demo credentials: `VintedDemo` / `Changeme123`** — also shown on the sign-in screen.
+**Demo credentials: `NutramegDemo` / `Changeme123`** — also shown on the sign-in screen.
 (The PriceLine tenant uses `PriceLineDemo` / `Changeme123`.)
 
 ---
@@ -122,6 +122,7 @@ Our edited IA. **The omissions are deliberate** and documented in
 
 ```
 Dashboard
+Alerts     ← SLA risk, high-value review, duplicate-refund exposure, integration health
 Rules      > Rule groups | Bulk actions | Rule check     ← not "Criteria check"
 Case admin > Assignment reasons | Queue management |
              Case management | Upload cases             ← no Case priority;
@@ -211,6 +212,6 @@ Not verified:
   throwaway harnesses. Vitest + Testing Library is the first thing to add.
 - No cross-browser testing beyond Chrome, no testing below 1280px, and no
   screen-reader pass.
-- The Vinted logo could not be downloaded — brandfetch's CDN needs an API key and
-  the only reachable asset was a 32×32 favicon. `public/tenant-*.svg` are
-  authored marks, still referenced by path from the config.
+- No real Nutrameg brand assets were supplied — `public/tenant-*.svg` are
+  authored placeholder marks, still referenced by path from the config, until
+  a real logo and palette are provided.
