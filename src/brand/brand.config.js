@@ -77,34 +77,40 @@ export const nutramegBrand = {
   /** Path only — never imported into a component. Served from /public. */
   logo: '/tenant-nutrameg.svg',
 
+  /** Full lockup (icon + wordtype baked into one asset), white-on-transparent —
+   * used in place of the icon+text combo wherever the surface is dark. Its
+   * natural aspect ratio is 626:133. */
+  wordmarkImage: '/nutrameg-wordmark.svg',
+  wordmarkImageRatio: 626 / 133,
+
   wordmark: { text: 'Nutrameg', accent: 'Console', weight: 700 },
 
   /* --- Palette ---------------------------------------------------------- *
-   * A warm spiced amber (nutmeg) rather than the reference's teal or the
-   * second tenant's navy — kept distinct on purpose so a screenshot never
-   * gets mistaken for another tenant. */
+   * Matched to the real nutrameg.com brand: near-black background with a
+   * mint-green accent, rather than an invented amber. Sampled directly from
+   * the live site's computed styles. */
   colors: {
-    primary: '#A85C2A',
-    primaryDeep: '#7A3F17',
-    primaryTint: '#F5E8DC',
-    primaryWash: '#FBF5EF',
+    primary: '#3DBF7B',
+    primaryDeep: '#1DB578',
+    primaryTint: '#E3F5EC',
+    primaryWash: '#F3FBF7',
 
     /* Nav rail is its own token pair: dark for this tenant, but a light-chrome
        tenant swaps these without touching a component. */
-    navRail: '#2B1B12',
-    navRailDeep: '#1D1109',
-    navActive: '#C97A3D',
-    navInk: '#EDE0D3',
-    navInkMuted: '#A68868',
+    navRail: '#18141E',
+    navRailDeep: '#100D15',
+    navActive: '#4ECB8D',
+    navInk: '#E4EDE9',
+    navInkMuted: '#8CA89A',
 
-    ink: '#2B1B12',
-    inkMuted: '#6B5A4A',
-    inkSubtle: '#9C8873',
-    canvas: '#F7F3EE',
+    ink: '#161B18',
+    inkMuted: '#5B6B63',
+    inkSubtle: '#8B9990',
+    canvas: '#F5F9F7',
     surface: '#FFFFFF',
-    surfaceSunken: '#FBF8F4',
-    line: '#E8DFD3',
-    lineStrong: '#D3C5B2',
+    surfaceSunken: '#FAFCFB',
+    line: '#E1EAE5',
+    lineStrong: '#C9D6CE',
 
     success: '#1F8A55',
     successTint: '#E3F5EA',
@@ -121,8 +127,8 @@ export const nutramegBrand = {
   },
 
   /* --- Chart ramp ------------------------------------------------------- *
-   * ONE HUE PLUS TINTS, not a rainbow. Five steps of the brand amber from the
-   * deep rail colour to a pale tint, plus a single contrast colour reserved
+   * ONE HUE PLUS TINTS, not a rainbow. Five steps of the brand mint-green from
+   * the deep rail colour to a pale tint, plus a single contrast colour reserved
    * for the "other" bucket and for negative series (rejected, lost, failed).
    *
    * Separation here comes from LIGHTNESS rather than hue, which is why a
@@ -132,9 +138,9 @@ export const nutramegBrand = {
    *
    * Assign in fixed order and never cycle. A sixth category folds into
    * "Other" and takes chartContrast. */
-  chartSeries: ['#A85C2A', '#C97A3D', '#DBA46E', '#EEDAC0', '#2B1B12'],
+  chartSeries: ['#3DBF7B', '#5ECB93', '#8FDBB4', '#C3ECD6', '#161B18'],
   chartContrast: '#B3261E',
-  chartNeutral: '#8A7A68',
+  chartNeutral: '#7C8B84',
 
   /* --- Money, locale, markets ------------------------------------------- */
   currency: 'EUR',

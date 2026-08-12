@@ -11,6 +11,7 @@ import createDraw from '@/data/rng';
 import { getCase } from '@/data/cases';
 import { CURRENT_USER, USERS } from '@/data/people';
 import { isClosed } from '@/domain/statuses';
+import { titleCase } from '@/utils/format';
 
 const DAY = 86_400_000;
 
@@ -25,12 +26,12 @@ const drawFor = (caseId, salt = 0) => createDraw(seedOf(caseId) + salt);
 export const DOC_KINDS = {
   representment_letter: 'Representment Letter',
   sales_receipt: 'Sales Receipt',
-  listing_snapshot: 'Listing Snapshot',
+  listing_snapshot: 'Plan Snapshot',
   delivery_confirmation: 'Delivery Confirmation',
   terms_acceptance: 'Terms Acceptance',
   issuer_memo: 'Issuer Cover Memo',
   cardholder_statement: 'Cardholder Statement',
-  buyer_claim_form: 'Buyer Claim Form',
+  buyer_claim_form: 'Member Claim Form',
 };
 
 const MERCHANT_SEQUENCE = ['representment_letter', 'sales_receipt', 'listing_snapshot', 'delivery_confirmation', 'terms_acceptance'];
@@ -62,10 +63,10 @@ export function getCaseDocs(caseId) {
  * ------------------------------------------------------------------ */
 
 const NOTE_SEEDS = [
-  { title: 'Evidence reviewed', text: 'Tracking confirms delivery to the buyer’s chosen pickup point. Scan weight matches the listing despatch weight.' },
-  { title: 'Awaiting issuer documents', text: 'Buyer claims non-receipt. Awaiting issuer documentation before deciding the next action.' },
+  { title: 'Evidence reviewed', text: 'Tracking confirms delivery to the address on file. Package weight matches the fulfilment record.' },
+  { title: 'Awaiting issuer documents', text: `${brand.terms.buyer} claims non-receipt. Awaiting issuer documentation before deciding the next action.` },
   { title: 'Ready to build packet', text: 'Documents complete on both sides. Ready to assemble the representment package.' },
-  { title: 'Seller responded', text: 'Seller supplied the original purchase receipt and the authentication card for the item.' },
+  { title: `${titleCase(brand.terms.seller)} responded`, text: `${titleCase(brand.terms.seller)} supplied the original enrolment confirmation and the programme agreement for the ${brand.terms.item}.` },
   { title: 'Escalated', text: 'Second dispute from this cardholder inside a fortnight. Flagged to fraud operations.' },
   { title: 'Below threshold', text: 'Value sits below the write-off threshold once handling cost is included.' },
 ];
@@ -227,7 +228,7 @@ export function getCaseHistory(caseId) {
  * ------------------------------------------------------------------ */
 
 export const FLAG_DEFS = [
-  { id: 'consolidated', label: 'Consolidated', tone: 'info', description: 'Linked to other cases by card, order or seller.' },
+  { id: 'consolidated', label: 'Consolidated', tone: 'info', description: `Linked to other cases by card, ${brand.terms.order} or ${brand.terms.seller}.` },
   { id: 'rfi_present', label: 'RFI Present', tone: 'info', description: 'A request for information is attached to this case.' },
   { id: 'timeframe_breached', label: 'Time Frame Breached', tone: 'danger', description: 'Past the internal due date.' },
   { id: 'pre_arbitration', label: 'Pre Arbitration', tone: 'warning', description: 'Case has reached the pre-arbitration cycle.' },
@@ -262,8 +263,8 @@ export function getCaseFlags(caseId, consolidationGroups = []) {
 
 export const REPRESENTMENT_REASONS = [
   'Compelling evidence — goods delivered',
-  'Item matches the listing description',
-  'Buyer no longer disputes',
+  `${titleCase(brand.terms.item)} matches the plan description`,
+  `${titleCase(brand.terms.buyer)} no longer disputes`,
   'Credit previously issued',
   'Invalid dispute — past time limit',
   'Proof of authorisation / AVS match',
@@ -303,7 +304,7 @@ export const PEND_REASONS = [
   'Awaiting carrier investigation',
 ];
 
-export const ASSIGN_SKILLS = ['All Dispute Response', 'Buyer Protection Response', 'High Value Access', 'Pre-Arbitration', 'Authenticity Review'];
+export const ASSIGN_SKILLS = ['All Dispute Response', `${brand.terms.claimProgramme} Response`, 'High Value Access', 'Pre-Arbitration', 'Authenticity Review'];
 
 export const ASSIGN_USERS = USERS.filter((u) => u.status === 'Active').map((u) => u.email);
 

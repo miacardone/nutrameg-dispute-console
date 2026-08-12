@@ -5,6 +5,9 @@
 
 import brand from '@/brand/brand.config';
 import { CURRENT_USER, USERS } from '@/data/people';
+import { titleCase } from '@/utils/format';
+
+const MARKETPLACE_TYPE = titleCase(brand.terms.marketplace);
 
 const NOW = Date.now();
 const DAY = 86_400_000;
@@ -23,17 +26,17 @@ export const API_ENDPOINTS = [
   {
     id: 'list_cases', group: 'Cases', method: 'GET', path: '/cases',
     summary: 'List cases across both intake paths.',
-    description: 'One collection holds chargebacks and Buyer Protection claims, distinguished by `caseType`. Card fields are null on claims; marketplace fields are present on both.',
+    description: `One collection holds chargebacks and ${brand.terms.claimProgramme} claims, distinguished by \`caseType\`. Card fields are null on claims; ${brand.terms.marketplace} fields are present on both.`,
     query: [
       { name: 'caseType', type: 'string', required: false, description: 'chargeback | claim' },
       { name: 'status', type: 'string[]', required: false, description: 'Lifecycle statuses to include.' },
       { name: 'queueId', type: 'string', required: false, description: 'Restrict to one queue.' },
-      { name: 'search', type: 'string', required: false, description: 'Matches case #, ARN, order, item, buyer or seller.' },
+      { name: 'search', type: 'string', required: false, description: `Matches case #, ARN, ${brand.terms.order}, ${brand.terms.item}, ${brand.terms.buyer} or ${brand.terms.seller}.` },
       { name: 'page', type: 'integer', required: false, description: 'Defaults to 1.' },
       { name: 'pageSize', type: 'integer', required: false, description: 'Defaults to 25, max 200.' },
     ],
     response: {
-      data: [{ id: 'VIN-720008', caseType: 'chargeback', status: 'working', disputeAmount: 621.9, currency: 'EUR', network: 'visa', reasonCode: '13.1', cycleId: 'first_cb', queueId: 'not_received', arn: '74537286104920117364520', orderId: 'ORD-38340681', seller: '@archive_amsterdam' }],
+      data: [{ id: 'NUT-810008', caseType: 'chargeback', status: 'working', disputeAmount: 621.9, currency: 'EUR', network: 'visa', reasonCode: '13.1', cycleId: 'first_cb', queueId: 'not_received', arn: '74537286104920117364520', orderId: 'ORD-38340681', seller: '@nordic_nutrition_1' }],
       meta: { page: 1, pageSize: 25, total: 1200 },
     },
     errors: [{ code: 400, meaning: 'Unknown filter value.' }, { code: 401, meaning: 'Missing or expired bearer token.' }],
@@ -41,9 +44,9 @@ export const API_ENDPOINTS = [
   {
     id: 'get_case', group: 'Cases', method: 'GET', path: '/cases/{caseId}',
     summary: 'Retrieve one case with documents, history and notes.',
-    description: 'Includes the marketplace context a chargeback carries — item, order and seller — which is what makes a 13.3 defensible without a second system.',
-    params: [{ name: 'caseId', type: 'string', required: true, description: 'e.g. VIN-720008' }],
-    response: { id: 'VIN-720008', caseType: 'chargeback', status: 'working', itemTitle: 'Mulberry Bayswater, oak', documents: [{ id: 'VIN-720008-merchant-1', title: 'Representment Letter' }], flags: ['consolidated', 'high_value'] },
+    description: `Includes the ${brand.terms.marketplace} context a chargeback carries — ${brand.terms.item}, ${brand.terms.order} and ${brand.terms.seller} — which is what makes a 13.3 defensible without a second system.`,
+    params: [{ name: 'caseId', type: 'string', required: true, description: 'e.g. NUT-810008' }],
+    response: { id: 'NUT-810008', caseType: 'chargeback', status: 'working', itemTitle: 'Nutrameg Clinical Annual Membership', documents: [{ id: 'NUT-810008-merchant-1', title: 'Representment Letter' }], flags: ['consolidated', 'high_value'] },
     errors: [{ code: 404, meaning: 'No case with that id.' }],
   },
   {
@@ -56,7 +59,7 @@ export const API_ENDPOINTS = [
       { name: 'worker', type: 'string', required: false },
       { name: 'assignmentReason', type: 'string', required: false, description: 'Required whenever the assignee changes.' },
     ],
-    response: { id: 'VIN-720008', status: 'pended' },
+    response: { id: 'NUT-810008', status: 'pended' },
     errors: [{ code: 422, meaning: 'Assignment reason missing while changing the assignee.' }],
   },
   {
@@ -68,15 +71,15 @@ export const API_ENDPOINTS = [
       { name: 'amounts', type: 'object', required: false, description: 'Required for split_case; the three parts must sum to the case amount.' },
       { name: 'note', type: 'string', required: false },
     ],
-    response: { id: 'VIN-720008', status: 'represented', outcome: 'pending' },
+    response: { id: 'NUT-810008', status: 'represented', outcome: 'pending' },
     errors: [{ code: 409, meaning: 'A blocking special instruction prevents this resolution.' }, { code: 422, meaning: 'Split amounts do not sum to the case amount.' }],
   },
   {
     id: 'consolidation', group: 'Cases', method: 'GET', path: '/cases/{caseId}/consolidation',
     summary: 'Linked cases that should be worked together.',
-    description: 'Returns every group the case belongs to. `duplicateRefundRisk` marks the dangerous one — the same order disputed through two channels. A shared seller across different orders is NOT flagged, because those are separate losses.',
+    description: `Returns every group the case belongs to. \`duplicateRefundRisk\` marks the dangerous one — the same ${brand.terms.order} disputed through two channels. A shared ${brand.terms.seller} across different ${brand.terms.order}s is NOT flagged, because those are separate losses.`,
     params: [{ name: 'caseId', type: 'string', required: true }],
-    response: { groups: [{ id: 'same_order:ORD-48030237', ruleId: 'same_order', size: 2, totalExposure: 1734.1, crossChannel: true, duplicateRefundRisk: true, caseIds: ['VIN-720872', 'VIN-720078'] }] },
+    response: { groups: [{ id: 'same_order:ORD-48030237', ruleId: 'same_order', size: 2, totalExposure: 1734.1, crossChannel: true, duplicateRefundRisk: true, caseIds: ['NUT-810872', 'NUT-810078'] }] },
     errors: [{ code: 404, meaning: 'No case with that id.' }],
   },
   {
@@ -98,13 +101,13 @@ export const API_ENDPOINTS = [
     id: 'bulk_preview', group: 'Rules', method: 'POST', path: '/bulk-actions/preview',
     summary: 'Count the cases a criteria set would match.',
     body: [{ name: 'criteria', type: 'object[]', required: true }, { name: 'matchType', type: 'string', required: false, description: 'all | any' }],
-    response: { matched: 46, total: 1200, sample: ['VIN-720012'] },
+    response: { matched: 46, total: 1200, sample: ['NUT-810012'] },
     errors: [{ code: 400, meaning: 'Unknown criterion key.' }],
   },
   {
     id: 'queues', group: 'Case admin', method: 'GET', path: '/queues',
     summary: 'Queues with live depth and service targets.',
-    response: { data: [{ id: 'not_received', label: 'Item Not Received', sla: 48, casesInQueue: 143 }] },
+    response: { data: [{ id: 'not_received', label: 'Subscription Not Activated', sla: 48, casesInQueue: 143 }] },
     errors: [{ code: 401, meaning: 'Missing or expired bearer token.' }],
   },
   {
@@ -143,7 +146,7 @@ export const API_ENDPOINTS = [
   {
     id: 'prefs', group: 'System', method: 'GET', path: '/system/preferences',
     summary: 'Numbering, due-date offsets and thresholds.',
-    response: { numbering: { prefix: 'VIN', digits: 6 }, dueDateOffsets: { schemeDays: { visa: 30, mastercard: 45, amex: 20 }, internalBufferDays: 4 }, thresholds: { riskAmount: 250 } },
+    response: { numbering: { prefix: 'NUT', digits: 6 }, dueDateOffsets: { schemeDays: { visa: 30, mastercard: 45, amex: 20 }, internalBufferDays: 4 }, thresholds: { riskAmount: 250 } },
     errors: [{ code: 403, meaning: 'Role lacks the System Preferences permission.' }],
   },
   {
@@ -165,7 +168,7 @@ export const AUTH_NOTE = {
  * Custom reports
  * ------------------------------------------------------------------ */
 
-export const REPORT_TYPES = ['Operational', 'Financial', 'Compliance', 'Marketplace'];
+export const REPORT_TYPES = ['Operational', 'Financial', 'Compliance', MARKETPLACE_TYPE];
 export const REPORT_FORMATS = ['CSV', 'XLSX', 'JSON', 'PDF'];
 /**
  * Group-by and filter options both come from domain/reportFields.js so the two
@@ -176,14 +179,14 @@ export const REPORT_TEMPLATES = [
   { id: 'tpl_operational', name: 'Operational queue review', description: 'Open cases by queue and assignee with due-date pressure.', type: 'Operational', groupBy: 'queue' },
   { id: 'tpl_reason', name: 'Reason code analysis', description: 'Volume and value by scheme reason code and category.', type: 'Compliance', groupBy: 'reasonCategory' },
   { id: 'tpl_recovery', name: 'Recovery and write-off', description: 'Closed cases with outcome and recovered value.', type: 'Financial', groupBy: 'entity' },
-  { id: 'tpl_marketplace', name: 'Marketplace exposure', description: 'Seller and item context across both intake paths.', type: 'Marketplace', groupBy: 'caseType' },
+  { id: 'tpl_marketplace', name: `${titleCase(brand.terms.seller)} exposure`, description: `${titleCase(brand.terms.seller)} and ${brand.terms.item} context across both intake paths.`, type: MARKETPLACE_TYPE, groupBy: 'caseType' },
 ];
 
 export const SAVED_REPORTS = [
   { id: 'rep1', name: 'Daily queue standup', type: 'Operational', templateId: 'tpl_operational', dateCreated: ago(64), createdBy: CURRENT_USER.email, rowCount: 901, fileSize: '182 KB', format: 'CSV', schedule: { mode: 'recurring', frequency: 'Daily', hour: 8, recipients: [`ops@${brand.emailDomain}`], nextRunAt: ahead(1) } },
   { id: 'rep2', name: 'Weekly reason-code mix', type: 'Compliance', templateId: 'tpl_reason', dateCreated: ago(120), createdBy: USERS[2].email, rowCount: 1200, fileSize: '311 KB', format: 'XLSX', schedule: { mode: 'recurring', frequency: 'Weekly', hour: 9, recipients: [`risk@${brand.emailDomain}`, `ops@${brand.emailDomain}`], nextRunAt: ahead(4) } },
   { id: 'rep3', name: 'Month-end recovery', type: 'Financial', templateId: 'tpl_recovery', dateCreated: ago(210), createdBy: CURRENT_USER.email, rowCount: 299, fileSize: '74 KB', format: 'XLSX', schedule: { mode: 'recurring', frequency: 'Monthly', hour: 7, recipients: [`finance@${brand.emailDomain}`], nextRunAt: ahead(9) } },
-  { id: 'rep4', name: 'Counterfeit seller review', type: 'Marketplace', templateId: 'tpl_marketplace', dateCreated: ago(18), createdBy: USERS[6].email, rowCount: 64, fileSize: '21 KB', format: 'CSV', schedule: { mode: 'on_demand' } },
+  { id: 'rep4', name: `Counterfeit ${brand.terms.seller} review`, type: MARKETPLACE_TYPE, templateId: 'tpl_marketplace', dateCreated: ago(18), createdBy: USERS[6].email, rowCount: 64, fileSize: '21 KB', format: 'CSV', schedule: { mode: 'on_demand' } },
   { id: 'rep5', name: 'Pre-arbitration watchlist', type: 'Operational', templateId: 'tpl_operational', dateCreated: ago(7), createdBy: USERS[8].email, rowCount: 108, fileSize: '33 KB', format: 'PDF', schedule: { mode: 'on_demand' } },
 ];
 
@@ -204,7 +207,7 @@ export const HELP_DOCS = [
   { id: 'd1', title: 'Reason code reference', description: 'Every Visa, Mastercard and Amex code handled, with evidence requirements.', category: 'Reference', readingMinutes: 14 },
   { id: 'd2', title: 'Due dates and internal buffers', description: 'How network windows, cycles and the internal buffer combine.', category: 'Reference', readingMinutes: 6 },
   { id: 'd3', title: 'Evidence that actually wins', description: 'What issuers accept for non-receipt and not-as-described disputes.', category: 'Playbook', readingMinutes: 11 },
-  { id: 'd4', title: 'Consolidation thresholds explained', description: 'Why the seller rule needs three cases and the card rule needs two.', category: 'Playbook', readingMinutes: 7 },
+  { id: 'd4', title: 'Consolidation thresholds explained', description: `Why the ${brand.terms.seller} rule needs three cases and the card rule needs two.`, category: 'Playbook', readingMinutes: 7 },
   { id: 'd5', title: 'CSV import specification', description: 'Column-by-column reference for case uploads.', category: 'Reference', readingMinutes: 9 },
   { id: 'd6', title: 'Webhook payload schemas', description: 'Every topic, its payload and delivery guarantees.', category: 'Integration', readingMinutes: 12 },
   { id: 'd7', title: 'Roles and permissions model', description: 'What each role can do, and how group membership interacts.', category: 'Administration', readingMinutes: 8 },
@@ -214,18 +217,18 @@ export const HELP_DOCS = [
 export const HELP_FAQ = [
   {
     id: 'f1',
-    question: 'Why does a chargeback show marketplace details like the item and seller?',
-    answer: 'Because you usually cannot defend a card dispute without them. A “not as described” reason code is an argument about the listing, so the listing, its photos and the seller’s history sit on the case alongside the ARN. Both intake paths share one record shape for exactly this reason.',
+    question: `Why does a chargeback show ${brand.terms.marketplace} details like the ${brand.terms.item} and ${brand.terms.seller}?`,
+    answer: `Because you usually cannot defend a card dispute without them. A “not as described” reason code is an argument about the plan, so the plan, its documentation and the ${brand.terms.seller}’s history sit on the case alongside the ARN. Both intake paths share one record shape for exactly this reason.`,
   },
   {
     id: 'f2',
     question: 'What does the consolidation flag actually mean?',
-    answer: 'That this case is linked to at least one other by card, order or seller. The Related cases panel shows what linked them, the group size and the total exposure across the group.',
+    answer: `That this case is linked to at least one other by card, ${brand.terms.order} or ${brand.terms.seller}. The Related cases panel shows what linked them, the group size and the total exposure across the group.`,
   },
   {
     id: 'f3',
     question: 'Is every consolidated group a double-refund risk?',
-    answer: 'No, and the distinction matters. Only a shared ORDER can be refunded twice. A seller group that happens to contain a chargeback and a claim across two different orders is two separate losses — real money, but not the same money twice. Only shared-order groups carry the danger treatment.',
+    answer: `No, and the distinction matters. Only a shared ${brand.terms.order.toUpperCase()} can be refunded twice. A ${brand.terms.seller} group that happens to contain a chargeback and a claim across two different ${brand.terms.order}s is two separate losses — real money, but not the same money twice. Only shared-${brand.terms.order} groups carry the danger treatment.`,
   },
   {
     id: 'f4',

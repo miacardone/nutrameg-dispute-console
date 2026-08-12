@@ -14,7 +14,8 @@ import { CASE_TYPES } from '@/domain/caseTypes';
 import { useToast } from '@/context/ToastContext';
 import { ROUTES } from '@/data/navigation';
 import { readPref, writePref } from '@/utils/storage';
-import { formatCurrency, formatDate, formatDateTime, formatNumber } from '@/utils/format';
+import { formatCurrency, formatDate, formatDateTime, formatNumber, titleCase } from '@/utils/format';
+import brand from '@/brand/brand.config';
 
 const DENSITY_KEY = 'ddc.cases.density';
 
@@ -38,9 +39,9 @@ function RowDetail({ row }) {
         ['Outcome', row.outcome], ['Doc status', row.docStatus],
       ]
     : [
-        ['Claim reason', row.reasonLabel], ['Order ID', row.orderId], ['Item', row.itemTitle],
-        ['Category', row.itemCategory], ['Buyer', row.buyer], ['Seller', row.seller],
-        ['Seller rating', row.sellerRating], ['Payment method', row.paymentMethod],
+        ['Claim reason', row.reasonLabel], [`${titleCase(brand.terms.order)} ID`, row.orderId], [titleCase(brand.terms.item), row.itemTitle],
+        ['Category', row.itemCategory], [titleCase(brand.terms.buyer), row.buyer], [titleCase(brand.terms.seller), row.seller],
+        [`${titleCase(brand.terms.seller)} rating`, row.sellerRating], ['Payment method', row.paymentMethod],
         ['Trans. amount', formatCurrency(row.transactionAmount, row.currency)], ['Trans. curr.', row.currency],
         ['Merch. ref #', row.merchantRef], ['Reviewer', row.reviewer],
         ['Doc status', row.docStatus],
@@ -183,7 +184,7 @@ export function CaseManagement() {
     <>
       <PageHeader
         title="Case management"
-        description="Every chargeback and Buyer Protection claim in one queue. Columns adapt to the case type you filter on."
+        description={`Every chargeback and ${brand.terms.claimProgramme} claim in one queue. Columns adapt to the case type you filter on.`}
         meta={
           <p className="page-head__desc">
             <strong className="mono">{formatNumber(filtered.length)}</strong> of{' '}
@@ -213,7 +214,7 @@ export function CaseManagement() {
             <SearchBar
               value={search}
               onChange={(v) => { setSearch(v); setPage(1); }}
-              placeholder="Case #, ARN, order, item, buyer or seller…"
+              placeholder={`Case #, ARN, ${brand.terms.order}, ${brand.terms.item}, ${brand.terms.buyer} or ${brand.terms.seller}…`}
               onAdvanced={() => setAdvancedOpen(true)}
               advancedCount={countActive(filters)}
             />

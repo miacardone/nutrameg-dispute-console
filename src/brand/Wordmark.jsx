@@ -8,6 +8,24 @@ import { useBrand } from '@/brand/BrandProvider';
 export function Wordmark({ inverse = false, showText = true, size = 26 }) {
   const brand = useBrand();
 
+  /* A full lockup (icon + wordtype in one asset) replaces the icon+text
+     combo below when the brand provides one — it's white-on-transparent,
+     so it only reads correctly on a dark surface. */
+  if (inverse && brand.wordmarkImage) {
+    const height = size * 1.3;
+    return (
+      <span className="wordmark">
+        <img
+          src={brand.wordmarkImage}
+          alt={brand.name}
+          height={height}
+          width={height * (brand.wordmarkImageRatio ?? 1)}
+          className="wordmark__image"
+        />
+      </span>
+    );
+  }
+
   return (
     <span className={`wordmark ${inverse ? 'wordmark--inverse' : ''}`.trim()}>
       <img

@@ -111,6 +111,7 @@ button, input, select, textarea { font: inherit; color: inherit; }
 
 .wordmark { display: inline-flex; align-items: center; gap: var(--s-2); min-width: 0; }
 .wordmark__logo { flex: none; border-radius: 6px; display: block; }
+.wordmark__image { flex: none; display: block; }
 .wordmark__text {
   font-family: var(--font-display);
   font-size: 0.9375rem;

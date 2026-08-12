@@ -33,7 +33,7 @@ export const ASSIGNMENT_REASON_META = brand.assignmentReasons.map((r, i) => ({
 
 export const UPLOAD_HISTORY = [
   { id: 'up14', filename: `${brand.acquirers[0].toLowerCase()}-chargebacks-w32.csv`, uploadedAt: ago(0, 4), uploadedBy: CURRENT_USER.email, rows: 148, accepted: 147, rejected: 1, status: 'Completed', note: '1 row rejected: unknown reason code “13.9”.' },
-  { id: 'up13', filename: 'buyer-protection-claims-w32.csv', uploadedAt: ago(1, 6), uploadedBy: USERS[2].email, rows: 64, accepted: 64, rejected: 0, status: 'Completed', note: null },
+  { id: 'up13', filename: 'member-protection-claims-w32.csv', uploadedAt: ago(1, 6), uploadedBy: USERS[2].email, rows: 64, accepted: 64, rejected: 0, status: 'Completed', note: null },
   { id: 'up12', filename: `${brand.acquirers[1].toLowerCase()}-visa-batch-0803.csv`, uploadedAt: ago(2, 2), uploadedBy: USERS[3].email, rows: 212, accepted: 209, rejected: 3, status: 'Completed', note: '3 rows rejected: order IDs not found.' },
   { id: 'up11', filename: 'prearb-responses-0801.csv', uploadedAt: ago(5, 8), uploadedBy: CURRENT_USER.email, rows: 19, accepted: 0, rejected: 19, status: 'Failed', note: 'Column “acquirer_case_number” missing from the header row.' },
   { id: 'up10', filename: 'manual-adjustments-july.csv', uploadedAt: ago(9), uploadedBy: USERS[4].email, rows: 6, accepted: 6, rejected: 0, status: 'Completed', note: null },

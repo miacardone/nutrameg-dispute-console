@@ -21,7 +21,7 @@ export const RULE_GROUPS = [
   { id: 'rg1', name: 'Due Dates Rule Group', triggeredBy: 'Case Import', enabled: true, description: 'Sets internal due dates by scheme and cycle as cases are imported.', updatedAt: ago(3), updatedBy: CURRENT_USER.email },
   { id: 'rg2', name: '00_Case Creation', triggeredBy: 'Case Import', enabled: true, description: 'Initial routing and enrichment applied as cases are created.', updatedAt: ago(1, 4), updatedBy: CURRENT_USER.email },
   { id: 'rg3', name: '00_Queue Rules', triggeredBy: 'Rule Action', enabled: true, description: 'Assigns cases to queues by scheme, value and reason code.', updatedAt: ago(6), updatedBy: CURRENT_USER.email },
-  { id: 'rg4', name: '01_Incoming Documents', triggeredBy: 'Inbound Correspondence', enabled: true, description: 'Matches and routes inbound issuer and seller documents.', updatedAt: ago(11), updatedBy: CURRENT_USER.email },
+  { id: 'rg4', name: '01_Incoming Documents', triggeredBy: 'Inbound Correspondence', enabled: true, description: `Matches and routes inbound issuer and ${brand.terms.seller} documents.`, updatedAt: ago(11), updatedBy: CURRENT_USER.email },
   { id: 'rg5', name: '01_Out Of Pend', triggeredBy: 'Out of Pend', enabled: false, description: 'Re-evaluates cases as they come out of a pend state.', updatedAt: ago(48), updatedBy: CURRENT_USER.email },
 ];
 
@@ -130,8 +130,8 @@ export const RULES = [
   },
   {
     id: 'r11', groupId: 'rg4', parentId: null, sortOrder: 2, enabled: true,
-    name: 'Notify on seller evidence',
-    description: 'Tells the owner when seller evidence lands.',
+    name: `Notify on ${brand.terms.seller} evidence`,
+    description: `Tells the owner when ${brand.terms.seller} evidence lands.`,
     criteria: [{ key: 'documentFields', values: ['received'] }],
     actions: [{ key: 'email_seller', value: null }],
     impact: 0, runCount: 1580, lastRunAt: ago(0, 4),
@@ -152,7 +152,7 @@ export const RULE_HISTORY = [
   { id: 'h1', ruleId: 'r2', type: 'Criteria changed', detail: `Threshold raised to ${brand.thresholds.routingHighValue}.`, user: CURRENT_USER.email, timestamp: ago(6) },
   { id: 'h2', ruleId: 'r2', type: 'Action added', detail: 'Added "Assign Reviewer".', user: CURRENT_USER.email, timestamp: ago(20) },
   { id: 'h3', ruleId: 'r2', type: 'Rule created', detail: 'Created in group "00_Case Creation".', user: CURRENT_USER.email, timestamp: ago(64) },
-  { id: 'h4', ruleId: 'r1', type: 'Criteria changed', detail: 'Added the marketplace claim reason so both paths route together.', user: CURRENT_USER.email, timestamp: ago(9) },
+  { id: 'h4', ruleId: 'r1', type: 'Criteria changed', detail: `Added the ${brand.terms.marketplace} claim reason so both paths route together.`, user: CURRENT_USER.email, timestamp: ago(9) },
   { id: 'h5', ruleId: 'r1', type: 'Rule created', detail: 'Created in group "00_Case Creation".', user: CURRENT_USER.email, timestamp: ago(70) },
   { id: 'h6', ruleId: 'r4', type: 'Rule disabled', detail: 'Paused pending the carrier integration.', user: CURRENT_USER.email, timestamp: ago(48) },
   { id: 'h7', ruleId: 'r8', type: 'Criteria changed', detail: 'Now requires documents received before auto-representing.', user: CURRENT_USER.email, timestamp: ago(14) },

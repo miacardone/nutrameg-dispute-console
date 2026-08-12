@@ -8,9 +8,9 @@ import { TextField } from '@/components/ui/Form';
 import Icon from '@/components/ui/Icon';
 import { ROUTES } from '@/data/navigation';
 
-const POINTS = [
-  { icon: 'layers', title: 'One queue, two intake paths', body: 'Card chargebacks and marketplace claims in a single book.' },
-  { icon: 'link', title: 'Consolidation built in', body: 'Linked disputes surface before the same order is refunded twice.' },
+const pointsFor = (brand) => [
+  { icon: 'layers', title: 'One queue, two intake paths', body: `Card chargebacks and ${brand.terms.claim}s in a single book.` },
+  { icon: 'link', title: 'Consolidation built in', body: `Linked disputes surface before the same ${brand.terms.order} is refunded twice.` },
   { icon: 'clock', title: 'Deadlines that mean something', body: 'Internal due dates sit ahead of the scheme deadline.' },
 ];
 
@@ -39,7 +39,7 @@ export function Login() {
         <div className="stack stack--loose" style={{ position: 'relative', zIndex: 1 }}>
           <h1 className="login__headline">{brand.tagline}</h1>
           <div className="stack">
-            {POINTS.map((p) => (
+            {pointsFor(brand).map((p) => (
               <div key={p.title} className="row row--tight row--top row--nowrap">
                 <Icon name={p.icon} size={17} style={{ color: 'var(--c-nav-active)', marginTop: 2 }} />
                 <span>

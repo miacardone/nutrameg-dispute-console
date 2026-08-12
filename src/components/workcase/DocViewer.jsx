@@ -4,7 +4,7 @@ import { IconButton } from '@/components/ui/Surface';
 import { Tooltip } from '@/components/ui/Overlay';
 import { useBrand } from '@/brand/BrandProvider';
 import { getCaseDocs } from '@/data/work-case';
-import { formatCurrency, formatDate } from '@/utils/format';
+import { formatCurrency, formatDate, titleCase } from '@/utils/format';
 
 /**
  * Document viewer.
@@ -74,9 +74,9 @@ function RepresentmentLetter({ c, brand }) {
       </table>
 
       <p>
-        The item was listed as &ldquo;{c.itemTitle}&rdquo; in {c.itemCategory}, described in{' '}
+        The {brand.terms.item} was enrolled as &ldquo;{c.itemTitle}&rdquo; in {c.itemCategory}, supplied in{' '}
         {c.itemCondition.toLowerCase()} condition, and despatched to the address on file. Carrier records
-        confirm the consignment was scanned and delivered. The listing description, photographs and the
+        confirm the consignment was scanned and delivered. The plan description, documentation and the
         accepted terms of sale are enclosed with this response.
       </p>
 
@@ -103,8 +103,8 @@ function SalesReceipt({ c, brand }) {
       <table className="doc-page__table">
         <tbody>
           <tr><td>Order placed</td><td>{formatDate(c.orderPlacedAt)}</td></tr>
-          <tr><td>{brand.terms.buyer}</td><td>{c.buyer}</td></tr>
-          <tr><td>{brand.terms.seller}</td><td>{c.seller}</td></tr>
+          <tr><td>{titleCase(brand.terms.buyer)}</td><td>{c.buyer}</td></tr>
+          <tr><td>{titleCase(brand.terms.seller)}</td><td>{c.seller}</td></tr>
           <tr><td>Item</td><td>{c.itemTitle}</td></tr>
           <tr><td>Condition</td><td>{c.itemCondition}</td></tr>
           <tr><td>Item price</td><td>{formatCurrency(c.itemPrice, c.currency)}</td></tr>
@@ -156,8 +156,8 @@ function GenericDoc({ c, brand, title }) {
         <tbody>
           <tr><td>Order</td><td>{c.orderId}</td></tr>
           <tr><td>Item</td><td>{c.itemTitle}</td></tr>
-          <tr><td>{brand.terms.buyer}</td><td>{c.buyer}</td></tr>
-          <tr><td>{brand.terms.seller}</td><td>{c.seller}</td></tr>
+          <tr><td>{titleCase(brand.terms.buyer)}</td><td>{c.buyer}</td></tr>
+          <tr><td>{titleCase(brand.terms.seller)}</td><td>{c.seller}</td></tr>
           <tr><td>Carrier</td><td>{c.carrier}</td></tr>
           <tr><td>Tracking</td><td>{c.tracking}</td></tr>
           <tr><td>Amount</td><td>{formatCurrency(c.disputeAmount, c.currency)}</td></tr>

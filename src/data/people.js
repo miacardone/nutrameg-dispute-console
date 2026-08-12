@@ -9,6 +9,7 @@
  */
 
 import brand from '@/brand/brand.config';
+import { titleCase } from '@/utils/format';
 
 const email = (name) => `${name.toLowerCase().replace(/[^a-z]+/g, '.')}@${brand.emailDomain}`;
 const initialsOf = (name) =>
@@ -51,9 +52,9 @@ export const SKILLS = [
   },
   {
     id: 's2',
-    name: 'Buyer Protection Response',
-    criteria: 'Queue is Buyer Protection',
-    description: 'Marketplace claims with no card leg.',
+    name: `${brand.terms.claimProgramme} Response`,
+    criteria: `Queue is ${brand.terms.claimProgramme}`,
+    description: `${titleCase(brand.terms.claim)}s with no card leg.`,
   },
   {
     id: 's3',

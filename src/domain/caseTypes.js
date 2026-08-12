@@ -1,3 +1,6 @@
+import brand from '@/brand/brand.config';
+import { titleCase } from '@/utils/format';
+
 /**
  * The hybrid model.
  * =================
@@ -52,11 +55,11 @@ export const CASE_COLUMNS = [
   { key: 'cardholder', header: 'Cardholder', appliesTo: 'chargeback', width: '150px', fw: 10 },
   { key: 'mid', header: 'MID', appliesTo: 'chargeback', width: '130px', fw: 8, mono: true },
 
-  { key: 'itemTitle', header: 'Item', appliesTo: 'claim', width: '220px', fw: 14 },
+  { key: 'itemTitle', header: titleCase(brand.terms.item), appliesTo: 'claim', width: '220px', fw: 14 },
   { key: 'claimReason', header: 'Claim reason', appliesTo: 'claim', width: '160px', fw: 10, sortable: true },
-  { key: 'buyer', header: 'Buyer', appliesTo: 'claim', width: '150px', fw: 10 },
-  { key: 'seller', header: 'Seller', appliesTo: 'claim', width: '150px', fw: 10 },
-  { key: 'orderId', header: 'Order', appliesTo: 'claim', width: '130px', fw: 9 },
+  { key: 'buyer', header: titleCase(brand.terms.buyer), appliesTo: 'claim', width: '150px', fw: 10 },
+  { key: 'seller', header: titleCase(brand.terms.seller), appliesTo: 'claim', width: '150px', fw: 10 },
+  { key: 'orderId', header: titleCase(brand.terms.order), appliesTo: 'claim', width: '130px', fw: 9 },
   { key: 'paymentMethod', header: 'Payment', appliesTo: 'claim', width: '120px', fw: 8 },
 
   { key: 'entityLabel', header: 'Entity', appliesTo: 'both', width: '120px', fw: 8 },
@@ -138,15 +141,15 @@ export function transactionSectionFields(c) {
 export function marketplaceSectionFields(c) {
   if (!c) return [];
   return [
-    { k: 'Item', v: c.itemTitle, wide: true },
+    { k: titleCase(brand.terms.item), v: c.itemTitle, wide: true },
     { k: 'Category', v: c.itemCategory },
-    { k: 'Listed Price', v: c.itemPrice, format: 'money' },
+    { k: 'Plan Price', v: c.itemPrice, format: 'money' },
     { k: 'Condition', v: c.itemCondition },
-    { k: 'Order ID', v: c.orderId, mono: true },
-    { k: 'Order Placed', v: c.orderPlacedAt, format: 'date' },
-    { k: 'Buyer', v: c.buyer },
-    { k: 'Seller', v: c.seller },
-    { k: 'Seller Rating', v: c.sellerRating, format: 'rating' },
+    { k: `${titleCase(brand.terms.order)} ID`, v: c.orderId, mono: true },
+    { k: `${titleCase(brand.terms.order)} Placed`, v: c.orderPlacedAt, format: 'date' },
+    { k: titleCase(brand.terms.buyer), v: c.buyer },
+    { k: titleCase(brand.terms.seller), v: c.seller },
+    { k: `${titleCase(brand.terms.seller)} Rating`, v: c.sellerRating, format: 'rating' },
     { k: 'Carrier', v: c.carrier },
   ];
 }
