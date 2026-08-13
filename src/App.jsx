@@ -13,6 +13,7 @@ import AlertSettings from '@/pages/AlertSettings';
 import AlertPermissions from '@/pages/AlertPermissions';
 import AlertReporting from '@/pages/AlertReporting';
 import AlertAssignments from '@/pages/AlertAssignments';
+import AlertValidations from '@/pages/AlertValidations';
 import CaseManagement from '@/pages/CaseManagement';
 import WorkCase from '@/pages/WorkCase';
 import RuleGroups from '@/pages/RuleGroups';
@@ -54,6 +55,7 @@ export function App() {
                 <Route path={ROUTES.alertPermissions} element={<AlertPermissions />} />
                 <Route path={ROUTES.alertReporting} element={<AlertReporting />} />
                 <Route path={ROUTES.alertAssignments} element={<AlertAssignments />} />
+                <Route path={ROUTES.alertValidations} element={<AlertValidations />} />
 
                 <Route path={ROUTES.ruleGroups} element={<RuleGroups />} />
                 <Route path={ROUTES.addRule} element={<AddRule />} />

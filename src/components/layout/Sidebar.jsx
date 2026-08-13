@@ -22,7 +22,7 @@ function Flyout({ anchorRect, item }) {
     <div className="rail__flyout" style={{ left: anchorRect.right + 6, top: anchorRect.top }}>
       <div className="rail__flyout-title">{item.label}</div>
       {item.children.map((child) => (
-        <NavLink key={child.path} to={child.path} className={({ isActive }) => `rail__child ${isActive ? 'is-active' : ''}`.trim()}>
+        <NavLink key={child.path} to={child.path} end={child.end} className={({ isActive }) => `rail__child ${isActive ? 'is-active' : ''}`.trim()}>
           {child.label}
         </NavLink>
       ))}
@@ -83,7 +83,7 @@ function NavGroup({ item, collapsed }) {
       {open && (
         <div className="rail__children">
           {item.children.map((child) => (
-            <NavLink key={child.path} to={child.path} className={({ isActive }) => `rail__child ${isActive ? 'is-active' : ''}`.trim()}>
+            <NavLink key={child.path} to={child.path} end={child.end} className={({ isActive }) => `rail__child ${isActive ? 'is-active' : ''}`.trim()}>
               {child.label}
             </NavLink>
           ))}

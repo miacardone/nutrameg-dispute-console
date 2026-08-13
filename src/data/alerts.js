@@ -238,4 +238,51 @@ export function unassignedOpenAlerts(alerts = ALERTS, entityId = null) {
   return alerts.filter((a) => a.outcome === 'open' && !a.assignedTo && (!entityId || a.entityId === entityId));
 }
 
+/* ------------------------------------------------------------------ *
+ * Validations — Order Insight-style transaction checks that run BEFORE
+ * an alert or a dispute exists, confirming the transaction data an issuer
+ * sees matches what Nutrameg has on file. Informational, not actionable:
+ * a check either runs or it doesn't, so every row lands Completed —
+ * there's no outcome for a human to decide here.
+ * ------------------------------------------------------------------ */
+
+function generateValidations() {
+  const draw = createDraw(SEED + 41);
+  const rows = [];
+  let seq = 500000;
+
+  brand.entities.forEach((entity) => {
+    const entityIdentifiers = IDENTIFIERS.filter((id) => id.entityId === entity.id);
+    const count = draw.int(20, 45);
+
+    for (let i = 0; i < count; i += 1) {
+      seq += 1;
+      const ccType = draw.weighted([['Visa', 65], ['Mastercard', 35]]);
+      const identifier = draw.pick(entityIdentifiers);
+      const transMs = NOW - draw.int(0, 60) * DAY;
+
+      rows.push({
+        id: `VAL-${seq}`,
+        entityId: entity.id,
+        entityLabel: entity.label,
+        source: 'Order Insight',
+        amount: draw.money(15, 320),
+        currency: brand.currency,
+        transactionDate: new Date(transMs).toISOString().slice(0, 10),
+        panMasked: `${ccType === 'Visa' ? '4' : '5'}${draw.digits(5)}xxxxxx${draw.digits(4)}`,
+        ccType,
+        descriptor: identifier?.identifier ?? `${entity.label.toUpperCase()}*APP`,
+        mid: entity.mid,
+        validatedAt: new Date(transMs + draw.int(0, 3) * DAY + draw.int(0, 86_000_000)).toISOString(),
+        arn: `${draw.digits(2)}${draw.digits(21)}`,
+        outcome: 'Completed',
+      });
+    }
+  });
+
+  return rows.sort((a, b) => new Date(b.validatedAt) - new Date(a.validatedAt));
+}
+
+export const VALIDATIONS = generateValidations();
+
 export default ALERTS;

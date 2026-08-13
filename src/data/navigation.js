@@ -30,6 +30,7 @@ export const ROUTES = {
   alertPermissions: '/alerts/permissions',
   alertReporting: '/alerts/reporting',
   alertAssignments: '/alerts/assignments',
+  alertValidations: '/alerts/validations',
 
   ruleGroups: '/rules/groups',
   addRule: '/rules/groups/add',
@@ -65,11 +66,15 @@ export const NAV = [
     path: '/alerts-group',
     icon: 'bell',
     children: [
-      { label: 'Alert case work', path: ROUTES.alerts, icon: 'shield', permission: 'Alert Case Work', area: 'Cases' },
+      // end: true — '/alerts' is a string-prefix of every sibling below it
+      // (/alerts/settings, /alerts/permissions, ...), so without an exact-match
+      // this link would stay highlighted no matter which sibling was active.
+      { label: 'Alert case work', path: ROUTES.alerts, icon: 'shield', permission: 'Alert Case Work', area: 'Cases', end: true },
       { label: 'Alert settings', path: ROUTES.alertSettings, icon: 'sliders', permission: 'Alert Settings', area: 'Cases' },
       { label: 'Alert permissions', path: ROUTES.alertPermissions, icon: 'lock', permission: 'Alert Permissions', area: 'Administration' },
       { label: 'Alert reporting', path: ROUTES.alertReporting, icon: 'file', permission: 'Alert Reporting', area: 'Reports' },
       { label: 'Alert assignments', path: ROUTES.alertAssignments, icon: 'user', permission: 'Alert Assignments', area: 'Administration' },
+      { label: 'Alert validations', path: ROUTES.alertValidations, icon: 'checklist', permission: 'Alert Validations', area: 'Cases' },
     ],
   },
   {
