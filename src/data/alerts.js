@@ -15,7 +15,7 @@
 import brand from '@/brand/brand.config';
 import createDraw from '@/data/rng';
 import { CASES } from '@/data/cases';
-import { USERS } from '@/data/people';
+import { ASSIGNABLE, USERS } from '@/data/people';
 
 const DAY = 86_400_000;
 const NOW = Date.now();
@@ -78,6 +78,39 @@ export const SELF_SERVICE = brand.entities.map((e, i) => ({
   },
 }));
 
+/** No access | Alerts User | Alerts Manager — leadership and managers get Manager, most
+ *  operational staff get User, and a couple of niche groups (Weekend Cover, Authenticity)
+ *  don't touch alerts day to day, same as they wouldn't in a real access model. */
+export const ALERTS_ROLES = ['No access', 'Alerts User', 'Alerts Manager'];
+
+const roleFor = (u) => {
+  if (u.roleId === 'admin' || u.roleId === 'manager') return 'Alerts Manager';
+  if (['Weekend Cover', 'Authenticity'].includes(u.group)) return 'No access';
+  return 'Alerts User';
+};
+
+export const AGENT_ROLES = USERS.filter((u) => u.status === 'Active').map((u) => ({
+  userId: u.id,
+  name: u.name,
+  email: u.email,
+  alertsRole: roleFor(u),
+}));
+
+export const findAgentRole = (email) => AGENT_ROLES.find((a) => a.email === email) ?? null;
+
+/** Agents eligible to work alert queues — anyone with the User or Manager role. */
+const ELIGIBLE_AGENTS = AGENT_ROLES.filter((a) => a.alertsRole !== 'No access').map((a) => a.email);
+
+/** Which entities each eligible agent can work — round-robin, 2 entities each. */
+export const WORKABLE_ENTITIES = Object.fromEntries(
+  brand.entities.map((e, i) => [
+    e.id,
+    ELIGIBLE_AGENTS.filter((_, idx) => idx % brand.entities.length === i || idx % brand.entities.length === (i + 1) % brand.entities.length),
+  ]),
+);
+
+export const canWork = (email, entityId) => (WORKABLE_ENTITIES[entityId] ?? []).includes(email);
+
 /* ------------------------------------------------------------------ *
  * Alert generation — one book per entity, anchored to now() like cases.js.
  * ------------------------------------------------------------------ */
@@ -91,6 +124,7 @@ function generate() {
     const entityIdentifiers = IDENTIFIERS.filter((id) => id.entityId === entity.id);
     const entityCases = CASES.filter((c) => c.entityId === entity.id && c.caseType === 'chargeback');
     const selfService = SELF_SERVICE.find((s) => s.entityId === entity.id);
+    const entityAgents = WORKABLE_ENTITIES[entity.id] ?? [];
     const count = draw.int(35, 60);
 
     for (let i = 0; i < count; i += 1) {
@@ -119,6 +153,9 @@ function generate() {
       }
 
       const autoWillHandle = selfService?.autoComplete?.[source.id] && outcome === 'open';
+      // Roughly 60% of OPEN alerts already have an owner; the rest sit in the
+      // unassigned backlog, which is what makes "balance workload" meaningful.
+      const assignedTo = outcome === 'open' && entityAgents.length && draw.bool(0.6) ? draw.pick(entityAgents) : null;
 
       alerts.push({
         id: `EWA-${seq}`,
@@ -131,6 +168,7 @@ function generate() {
         matched: Boolean(identifier),
         amount: linkedCase?.disputeAmount ?? draw.money(15, 320),
         currency: brand.currency,
+        panMasked: `${source.network === 'Visa' ? '4' : '5'}${draw.digits(5)} ${draw.digits(2)}•• •••• ${draw.digits(4)}`,
         transactionDate: new Date(transMs).toISOString().slice(0, 10),
         alertDate: new Date(alertMs).toISOString(),
         expiresAt: new Date(expiresMs).toISOString(),
@@ -138,6 +176,7 @@ function generate() {
         processedAt: processedMs ? new Date(processedMs).toISOString() : null,
         serviceLevel: selfService?.serviceLevel ?? 'Self Service',
         autoWillHandle,
+        assignedTo,
         billable: draw.bool(0.85),
       });
     }
@@ -173,6 +212,30 @@ export function entityRollup(alerts = ALERTS) {
       serviceLevel: selfService?.serviceLevel ?? 'Self Service',
     };
   });
+}
+
+/** Assignments-page rollup, one row per eligible agent. Takes a live list for the same reason as entityRollup. */
+export function agentRollup(alerts = ALERTS) {
+  return AGENT_ROLES.filter((a) => a.alertsRole !== 'No access').map((agent) => {
+    const entities = brand.entities.filter((e) => canWork(agent.email, e.id));
+    const assigned = alerts.filter((a) => a.assignedTo === agent.email);
+    const openLoad = assigned.filter((a) => a.outcome === 'open');
+
+    return {
+      email: agent.email,
+      name: agent.name,
+      alertsRole: agent.alertsRole,
+      entities,
+      assignedAlerts: assigned.length,
+      openLoad: openLoad.length,
+      openValue: Math.round(openLoad.reduce((s, a) => s + a.amount, 0) * 100) / 100,
+    };
+  });
+}
+
+/** Open alerts nobody owns yet, optionally scoped to one entity. */
+export function unassignedOpenAlerts(alerts = ALERTS, entityId = null) {
+  return alerts.filter((a) => a.outcome === 'open' && !a.assignedTo && (!entityId || a.entityId === entityId));
 }
 
 export default ALERTS;
