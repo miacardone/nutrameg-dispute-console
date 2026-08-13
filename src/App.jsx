@@ -8,7 +8,8 @@ import { ROUTES } from '@/data/navigation';
 
 import Login from '@/pages/Login';
 import Dashboard from '@/pages/Dashboard';
-import Alerts from '@/pages/Alerts';
+import AlertCaseWork from '@/pages/AlertCaseWork';
+import AlertSettings from '@/pages/AlertSettings';
 import CaseManagement from '@/pages/CaseManagement';
 import WorkCase from '@/pages/WorkCase';
 import RuleGroups from '@/pages/RuleGroups';
@@ -45,7 +46,8 @@ export function App() {
               <Route element={<RequireAuth><AppLayout /></RequireAuth>}>
                 <Route index element={<Navigate to={ROUTES.dashboard} replace />} />
                 <Route path={ROUTES.dashboard} element={<Dashboard />} />
-                <Route path={ROUTES.alerts} element={<Alerts />} />
+                <Route path={ROUTES.alerts} element={<AlertCaseWork />} />
+                <Route path={ROUTES.alertSettings} element={<AlertSettings />} />
 
                 <Route path={ROUTES.ruleGroups} element={<RuleGroups />} />
                 <Route path={ROUTES.addRule} element={<AddRule />} />

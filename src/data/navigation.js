@@ -12,9 +12,11 @@
  *     the Custom reports builder.
  *   · Users is ONE page with tabs, not a dropdown of three.
  *   · NO Unmatched docs section anywhere.
- *   · Alerts sits right under Dashboard — SLA risk, high-value review,
- *     duplicate-refund exposure and integration health in one place, so
- *     nobody has to piece it together from four other screens.
+ *   · Alerts is the network EARLY-WARNING product (Verifi CDRN / Visa RDR /
+ *     Ethoca) — refund before a chargeback is ever filed — not a generic
+ *     notifications inbox. It sits right under Dashboard, split into Case
+ *     work (the alert queue) and Settings (identifiers, recipients,
+ *     self-service).
  *
  * `permission` is the key Permissions grants against — the grid is generated
  * from THIS list, so a nav change can never leave a stale permission behind.
@@ -24,6 +26,7 @@ export const ROUTES = {
   login: '/login',
   dashboard: '/dashboard',
   alerts: '/alerts',
+  alertSettings: '/alerts/settings',
 
   ruleGroups: '/rules/groups',
   addRule: '/rules/groups/add',
@@ -54,7 +57,15 @@ export const ROUTES = {
 
 export const NAV = [
   { label: 'Dashboard', path: ROUTES.dashboard, icon: 'dashboard', permission: 'Dashboard', area: 'Cases' },
-  { label: 'Alerts', path: ROUTES.alerts, icon: 'bell', permission: 'Alerts', area: 'Cases' },
+  {
+    label: 'Alerts',
+    path: '/alerts-group',
+    icon: 'bell',
+    children: [
+      { label: 'Alert case work', path: ROUTES.alerts, icon: 'shield', permission: 'Alert Case Work', area: 'Cases' },
+      { label: 'Alert settings', path: ROUTES.alertSettings, icon: 'sliders', permission: 'Alert Settings', area: 'Cases' },
+    ],
+  },
   {
     label: 'Rules',
     path: '/rules',

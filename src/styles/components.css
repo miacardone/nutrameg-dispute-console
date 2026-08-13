@@ -216,6 +216,7 @@
 .icon-btn:hover:not(:disabled) { background: var(--c-primary-wash); color: var(--c-primary); }
 .icon-btn:disabled { opacity: 0.4; cursor: not-allowed; }
 .icon-btn--danger:hover:not(:disabled) { background: var(--c-danger-tint); color: var(--c-danger); }
+.icon-btn--success:hover:not(:disabled) { background: var(--c-success-tint); color: var(--c-success); }
 
 /* Round action row on Work case */
 .round-btn {
