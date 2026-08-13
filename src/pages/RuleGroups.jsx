@@ -153,7 +153,12 @@ export function RuleGroups() {
       cell: (r) => (
         <div className="row row--xtight row--nowrap">
           <IconButton icon="history" label="Rule history" size={13} onClick={() => setHistoryRule(r)} />
-          <IconButton icon="branch" label="Add sub-rule" size={13} onClick={() => notify('Sub-rule builder opens from the rule builder.')} />
+          <IconButton
+            icon="branch"
+            label="Add sub-rule"
+            size={13}
+            onClick={() => navigate(ROUTES.addRule, { state: { parentRuleId: r.id, parentRuleName: r.name, groupId: r.groupId } })}
+          />
           <IconButton icon="edit" label="Edit rule" size={13} onClick={() => navigate(ROUTES.addRule)} />
           <IconButton icon="trash" label="Delete rule" tone="danger" size={13} onClick={() => setConfirmDelete(r)} />
         </div>
@@ -168,7 +173,6 @@ export function RuleGroups() {
       <PageHeader
         title="Rule groups"
         description="Automation that runs at intake, on a schedule and after other rules fire. Groups run in order; every rule inside a group is evaluated."
-        actions={<Button variant="primary" icon="plus" onClick={() => navigate(ROUTES.addRule)}>Add Rule</Button>}
       />
 
       <div className="grid" style={{ gridTemplateColumns: 'minmax(230px, 300px) minmax(0, 1fr)', alignItems: 'start' }}>

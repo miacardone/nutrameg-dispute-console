@@ -29,8 +29,8 @@ export function DensityToggle({ value, onChange }) {
           <Icon name="columns" size={12} /> Fit to width
         </button>
       </Tooltip>
-      <Tooltip label="Comfortable — natural widths and full headers, scrolls horizontally">
-        <button type="button" className={`seg__btn ${value === 'comfortable' ? 'is-active' : ''}`.trim()} onClick={() => onChange('comfortable')}>
+      <Tooltip label="Comfortable view is temporarily unavailable">
+        <button type="button" className="seg__btn" disabled>
           Comfortable
         </button>
       </Tooltip>

@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/Surface';
 import { SelectField, TextAreaField, TextField } from '@/components/ui/Form';
 import Icon from '@/components/ui/Icon';
@@ -55,6 +55,8 @@ function ActionValue({ actionKey, value, onChange }) {
 export function AddRule() {
   const navigate = useNavigate();
   const { notify } = useToast();
+  const { state } = useLocation();
+  const parentRuleName = state?.parentRuleName ?? null;
 
   const [step, setStep] = useState(0);
   const [activeCategory, setActiveCategory] = useState(CRITERIA_CATEGORIES[0].key);
@@ -63,7 +65,7 @@ export function AddRule() {
   const [statuses, setStatuses] = useState(['open', 'ready', 'assigned']);
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
-  const [groupId, setGroupId] = useState(RULE_GROUPS[1].id);
+  const [groupId, setGroupId] = useState(state?.groupId ?? RULE_GROUPS[1].id);
   const [testRun, setTestRun] = useState(null);
 
   /** Live impact against the real book — recomputed on every edit. */
@@ -157,7 +159,10 @@ export function AddRule() {
       <main className="builder__main">
         <div className="stack">
           <div className="row row--between">
-            <h1>Add rule</h1>
+            <div>
+              <h1>{parentRuleName ? 'Add sub-rule' : 'Add rule'}</h1>
+              {parentRuleName && <p className="small muted" style={{ marginTop: 2 }}>Nested under <strong>{parentRuleName}</strong> — only evaluated when the parent matches.</p>}
+            </div>
             <Button variant="ghost" icon="close" onClick={() => navigate(ROUTES.ruleGroups)}>Cancel</Button>
           </div>
 
@@ -306,9 +311,17 @@ export function AddRule() {
                 <Button
                   variant="primary"
                   disabled={!canComplete}
-                  onClick={() => { notify(`Rule “${name}” created — ${formatNumber(matched.length)} cases match.`, 'success'); navigate(ROUTES.ruleGroups); }}
+                  onClick={() => {
+                    notify(
+                      parentRuleName
+                        ? `Sub-rule “${name}” added under “${parentRuleName}” — ${formatNumber(matched.length)} cases match.`
+                        : `Rule “${name}” created — ${formatNumber(matched.length)} cases match.`,
+                      'success',
+                    );
+                    navigate(ROUTES.ruleGroups);
+                  }}
                 >
-                  Complete Rule
+                  {parentRuleName ? 'Complete Sub-rule' : 'Complete Rule'}
                 </Button>
               </div>
             </div>

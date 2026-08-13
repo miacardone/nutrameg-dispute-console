@@ -255,6 +255,66 @@ export function disputeOutcomes(cases, weeks = 8) {
   });
 }
 
+/* ------------------------------------------------------------------ *
+ * Report-builder template previews — one distinct shape per template,
+ * so switching templates visibly changes what the preview shows instead
+ * of just relabelling the same dashboard charts.
+ * ------------------------------------------------------------------ */
+
+/** Due-date pressure as a donut — how much of the open book is overdue vs comfortable. */
+export function dueBucketDonut(cases) {
+  const open = cases.filter((c) => !isClosed(c.status));
+  const counts = new Map(DUE_BUCKETS.map((b) => [b.id, 0]));
+  open.forEach((c) => counts.set(dueBucketOf(c.dueDate), (counts.get(dueBucketOf(c.dueDate)) ?? 0) + 1));
+
+  return {
+    slices: DUE_BUCKETS.map((b) => ({ label: b.label, value: counts.get(b.id) ?? 0 })).filter((s) => s.value > 0),
+    total: open.length,
+  };
+}
+
+/** Volume and value by reason category — the bar half of reason-code analysis. */
+export function reasonCategoryTotals(cases) {
+  return REASON_CATEGORIES.map((cat) => {
+    const rows = cases.filter((c) => c.reasonCategory === cat.id);
+    return {
+      period: cat.label,
+      count: rows.length,
+      value: Math.round(rows.reduce((s, c) => s + c.disputeAmount, 0) * 100) / 100,
+    };
+  }).filter((r) => r.count > 0);
+}
+
+/** Outcome split for closed cases — the donut half of recovery and write-off. */
+export function outcomeDonut(cases) {
+  const closed = cases.filter((c) => isClosed(c.status));
+  const groups = [
+    { label: 'Won', value: closed.filter((c) => c.outcome === 'won').length },
+    { label: 'Lost', value: closed.filter((c) => c.outcome === 'lost').length },
+    { label: 'Written off', value: closed.filter((c) => c.outcome === 'written_off').length },
+  ].filter((s) => s.value > 0);
+  return { slices: groups, total: closed.length };
+}
+
+/** Top item categories by volume — what's actually being disputed. */
+export function itemCategoryTotals(cases, topN = 6) {
+  const counts = new Map();
+  cases.forEach((c) => counts.set(c.itemCategory, (counts.get(c.itemCategory) ?? 0) + 1));
+  return [...counts.entries()]
+    .map(([period, count]) => ({ period, count }))
+    .sort((a, b) => b.count - a.count)
+    .slice(0, topN);
+}
+
+/** Chargeback vs claim split — the two intake paths a hybrid case book shares. */
+export function caseTypeDonut(cases) {
+  const slices = [
+    { label: 'Chargeback', value: cases.filter((c) => c.caseType === 'chargeback').length },
+    { label: 'Claim', value: cases.filter((c) => c.caseType === 'claim').length },
+  ].filter((s) => s.value > 0);
+  return { slices, total: cases.length };
+}
+
 /** Error handling by response type — the one genuinely synthetic series. */
 export const ERROR_TYPES = [
   { id: 'timeout', label: 'Gateway timeout', http: '504', remedy: 'Retried automatically with backoff.' },

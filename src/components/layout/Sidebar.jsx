@@ -50,7 +50,7 @@ function NavGroup({ item, collapsed }) {
         {!collapsed && <span className="rail__label">{item.label}</span>}
       </NavLink>
     );
-    return collapsed ? <Tooltip label={item.label} side="right">{link}</Tooltip> : link;
+    return collapsed ? <Tooltip label={item.label} side="right" className="rail__tooltip-fill">{link}</Tooltip> : link;
   }
 
   if (collapsed) {

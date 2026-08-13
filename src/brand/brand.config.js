@@ -73,6 +73,9 @@ export const nutramegBrand = {
   tagline: 'Chargebacks and member claims in one operational queue.',
   supportEmail: 'disputes@nutrameg.example',
   emailDomain: 'nutrameg.example',
+  /** HQ is Riga — this tenant's due-date timezone, locale and demo staff all key off it. */
+  address: 'Republikas laukums 2A, Riga, LV-1010, Latvia',
+  department: 'Chargeback & Dispute Resolution',
 
   /** Path only — never imported into a component. Served from /public. */
   logo: '/tenant-nutrameg.svg',
@@ -162,7 +165,9 @@ export const nutramegBrand = {
     claims: 'claims',
     claimProgramme: 'Member Protection',
     buyer: 'member',
+    buyers: 'members',
     seller: 'coach',
+    sellers: 'coaches',
     order: 'subscription',
     item: 'plan',
     entity: 'entity',
@@ -305,6 +310,8 @@ export const pricelineBrand = {
   tagline: 'Card disputes and booking claims in one operational queue.',
   supportEmail: 'disputes@priceline.example',
   emailDomain: 'priceline.example',
+  address: '800 Connecticut Ave, Norwalk, CT 06854, USA',
+  department: 'Chargeback & Dispute Resolution',
   logo: '/tenant-priceline.svg',
   wordmark: { text: 'PriceLine', accent: 'Console', weight: 700 },
 
@@ -344,7 +351,9 @@ export const pricelineBrand = {
     claims: 'booking claims',
     claimProgramme: 'Traveller Protection',
     buyer: 'traveller',
+    buyers: 'travellers',
     seller: 'supplier',
+    sellers: 'suppliers',
     order: 'booking',
     item: 'reservation',
     marketplace: 'travel',

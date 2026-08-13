@@ -101,6 +101,7 @@ export function Tooltip({ label, side = 'top', wide = false, disabled = false, c
  */
 export function Popover({ trigger, children, align = 'left', width = 240, className = '' }) {
   const ref = useRef(null);
+  const contentRef = useRef(null);
   const [open, setOpen] = useState(false);
   const [pos, setPos] = useState(null);
 
@@ -117,7 +118,13 @@ export function Popover({ trigger, children, align = 'left', width = 240, classN
   useEffect(() => {
     if (!open) return undefined;
     const onKey = (e) => e.key === 'Escape' && close();
-    const onScroll = () => close();
+    // Closes when the PAGE scrolls out from under the anchor — not when the
+    // popover's own content (e.g. a long filter list) scrolls, since 'scroll'
+    // only bubbles via the capture phase and would otherwise catch that too.
+    const onScroll = (e) => {
+      if (contentRef.current && contentRef.current.contains(e.target)) return;
+      close();
+    };
     document.addEventListener('keydown', onKey);
     window.addEventListener('scroll', onScroll, true);
     return () => {
@@ -137,7 +144,7 @@ export function Popover({ trigger, children, align = 'left', width = 240, classN
       {open && pos && createPortal(
         <>
           <div className="popover__backdrop" onClick={close} aria-hidden />
-          <div className="popover" style={{ left: pos.left, top: pos.top, width }} role="dialog">
+          <div ref={contentRef} className="popover" style={{ left: pos.left, top: pos.top, width }} role="dialog">
             {typeof children === 'function' ? children({ close }) : children}
           </div>
         </>,

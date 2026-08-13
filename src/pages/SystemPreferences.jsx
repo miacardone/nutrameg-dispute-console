@@ -51,11 +51,25 @@ export function SystemPreferences() {
                 label="Locale"
                 value={prefs.locale}
                 onChange={(e) => set({ locale: e.target.value })}
-                options={['en-GB', 'en-US', 'fr-FR', 'de-DE', 'lt-LT'].map((l) => ({ value: l, label: l }))}
+                options={['en-GB', 'en-US', 'lv-LV', 'de-DE', 'fr-FR'].map((l) => ({ value: l, label: l }))}
               />
-              <TextField label="Timezone" value={prefs.timezone} onChange={(e) => set({ timezone: e.target.value })} />
+              <SelectField
+                label="Timezone"
+                value={prefs.timezone}
+                onChange={(e) => set({ timezone: e.target.value })}
+                options={[
+                  { value: 'Europe/Riga', label: 'Europe/Riga (EET, HQ)' },
+                  { value: 'Europe/Vilnius', label: 'Europe/Vilnius' },
+                  { value: 'Europe/Tallinn', label: 'Europe/Tallinn' },
+                  { value: 'Europe/Warsaw', label: 'Europe/Warsaw' },
+                  { value: 'Europe/Berlin', label: 'Europe/Berlin' },
+                  { value: 'Europe/London', label: 'Europe/London' },
+                  { value: 'UTC', label: 'UTC' },
+                ]}
+              />
               <p className="micro subtle">
-                These apply to new records. The display locale for this session comes from the tenant configuration.
+                These apply to new records. Defaults reflect Nutrameg SIA’s Riga headquarters. The display locale for
+                this session comes from the tenant configuration.
               </p>
             </div>
           </Card>

@@ -4,15 +4,99 @@ import { DataTable, ExportButtons } from '@/components/ui/DataTable';
 import { Modal } from '@/components/ui/Modal';
 import { SearchBar, SelectField, TextField } from '@/components/ui/Form';
 import { BarChart, Donut } from '@/components/charts/Charts';
-import { TruncatedText } from '@/components/ui/Overlay';
+import { Popover, TruncatedText } from '@/components/ui/Overlay';
 import Icon from '@/components/ui/Icon';
 import { REPORT_FORMATS, REPORT_TEMPLATES, REPORT_TYPES, SAVED_REPORTS } from '@/data/content';
 import { FILTER_OPERATORS, REPORT_FIELDS, applyReportScope, describeFilter, getReportField } from '@/domain/reportFields';
 import { CASES } from '@/data/cases';
-import { caseActivityPerWeek, caseKpis, reasonCodeDonut } from '@/domain/metrics';
+import {
+  caseKpis, caseTypeDonut, disputeOutcomes, dueBucketDonut,
+  itemCategoryTotals, outcomeDonut, reasonCategoryTotals, reasonCodeDonut, totalsByQueue,
+} from '@/domain/metrics';
+import { isClosed } from '@/domain/statuses';
 import brand from '@/brand/brand.config';
 import { useToast } from '@/context/ToastContext';
-import { formatCompactCurrency, formatDate, formatNumber, formatPercent } from '@/utils/format';
+import { formatCompactCurrency, formatDate, formatNumber, formatPercent, titleCase } from '@/utils/format';
+
+/**
+ * One preview shape per template — the whole point of a template picker is
+ * that the picture actually changes, not just the label above it.
+ */
+function templateView(templateId, scoped, brandTerms) {
+  const kpis = caseKpis(scoped);
+
+  if (templateId === 'tpl_reason') {
+    const donut = reasonCodeDonut(scoped, brand.schemes[0].id, 5);
+    return {
+      kpis: [
+        { label: 'Disputed amount', value: formatCompactCurrency(kpis.openValue) },
+        { label: 'Chargebacks', value: formatNumber(kpis.chargebacks) },
+        { label: 'Claims', value: formatNumber(kpis.claims) },
+        { label: 'Win rate', value: formatPercent(kpis.winRate, 0) },
+      ],
+      bar: {
+        title: 'By reason category', data: reasonCategoryTotals(scoped),
+        series: [{ key: 'count', name: 'Cases' }], xLabel: 'Category', yLabel: 'Cases',
+      },
+      donut: { title: `By ${brand.schemes[0].label} reason code`, ...donut, centreLabel: brand.schemes[0].label },
+    };
+  }
+
+  if (templateId === 'tpl_recovery') {
+    const closed = scoped.filter((c) => isClosed(c.status));
+    const donut = outcomeDonut(scoped);
+    return {
+      kpis: [
+        { label: 'Recovered', value: formatCompactCurrency(kpis.recoveredValue) },
+        { label: 'Win rate', value: formatPercent(kpis.winRate, 0) },
+        { label: 'Closed cases', value: formatNumber(closed.length) },
+        { label: 'Written off', value: formatNumber(closed.filter((c) => c.outcome === 'written_off').length) },
+      ],
+      bar: {
+        title: 'Outcomes per week', data: disputeOutcomes(closed, 6),
+        series: [{ key: 'won', name: 'Won' }, { key: 'lost', name: 'Lost' }, { key: 'written_off', name: 'Written off' }],
+        xLabel: 'Week', yLabel: 'Cases',
+      },
+      donut: { title: 'Outcome split', ...donut, centreLabel: 'Closed' },
+    };
+  }
+
+  if (templateId === 'tpl_marketplace') {
+    const donut = caseTypeDonut(scoped);
+    const uniqueSellers = new Set(scoped.map((c) => c.sellerId)).size;
+    return {
+      kpis: [
+        { label: `Unique ${brandTerms.sellers}`, value: formatNumber(uniqueSellers) },
+        { label: 'Chargebacks', value: formatNumber(kpis.chargebacks) },
+        { label: 'Claims', value: formatNumber(kpis.claims) },
+        { label: 'Disputed amount', value: formatCompactCurrency(kpis.openValue) },
+      ],
+      bar: {
+        title: `Top ${brandTerms.item} categories`, data: itemCategoryTotals(scoped),
+        series: [{ key: 'count', name: 'Cases' }], xLabel: 'Category', yLabel: 'Cases',
+      },
+      donut: { title: 'Intake path split', ...donut, centreLabel: 'Cases' },
+    };
+  }
+
+  // tpl_operational (default) — open queue pressure.
+  const donut = dueBucketDonut(scoped);
+  return {
+    kpis: [
+      { label: 'Open cases', value: formatNumber(kpis.openCases) },
+      { label: 'Overdue', value: formatNumber(kpis.overdueCases) },
+      { label: 'Unassigned', value: formatNumber(kpis.unassigned) },
+      { label: 'Open value', value: formatCompactCurrency(kpis.openValue) },
+    ],
+    bar: {
+      title: 'Open cases by queue',
+      data: totalsByQueue(scoped).filter((q) => q.casesInQueue > 0).map((q) => ({ period: q.label, casesInQueue: q.casesInQueue, overdue: q.overdue })),
+      series: [{ key: 'casesInQueue', name: 'In queue' }, { key: 'overdue', name: 'Overdue' }],
+      xLabel: 'Queue', yLabel: 'Cases',
+    },
+    donut: { title: 'Due-date pressure', ...donut, centreLabel: 'Open' },
+  };
+}
 
 /**
  * Custom reports.
@@ -22,6 +106,116 @@ import { formatCompactCurrency, formatDate, formatNumber, formatPercent } from '
  */
 
 const TABS = [{ value: 'reports', label: 'Reports' }, { value: 'scheduled', label: 'Scheduled reports' }, { value: 'builder', label: 'Report builder' }];
+
+/**
+ * Template card art — a small preview of the CHART SHAPE that template
+ * actually produces, not a generic spreadsheet icon repeated four times.
+ */
+function TemplateGlyph({ id }) {
+  if (id === 'tpl_reason') {
+    return (
+      <svg viewBox="0 0 64 40" width="52" height="34" aria-hidden>
+        <circle cx="32" cy="20" r="14" fill="none" stroke="var(--c-primary-tint)" strokeWidth="7" />
+        <circle cx="32" cy="20" r="14" fill="none" stroke="var(--c-primary)" strokeWidth="7"
+          strokeDasharray="52 88" strokeDashoffset="0" strokeLinecap="round" transform="rotate(-90 32 20)" />
+        <circle cx="32" cy="20" r="14" fill="none" stroke="var(--c-ink)" strokeOpacity="0.55" strokeWidth="7"
+          strokeDasharray="18 88" strokeDashoffset="-52" strokeLinecap="round" transform="rotate(-90 32 20)" />
+      </svg>
+    );
+  }
+  if (id === 'tpl_recovery') {
+    return (
+      <svg viewBox="0 0 64 40" width="52" height="34" aria-hidden>
+        <polyline points="6,30 20,24 34,27 48,14 58,10" fill="none" stroke="var(--c-primary)" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+        <circle cx="58" cy="10" r="3.5" fill="var(--c-primary)" />
+        <line x1="6" y1="34" x2="58" y2="34" stroke="var(--c-line-strong)" strokeWidth="1.5" />
+      </svg>
+    );
+  }
+  if (id === 'tpl_marketplace') {
+    const widths = [40, 28, 34, 18];
+    return (
+      <svg viewBox="0 0 64 40" width="52" height="34" aria-hidden>
+        {widths.map((w, i) => (
+          <rect key={i} x="4" y={4 + i * 9} width={w} height="5" rx="2.5" fill={i === 0 ? 'var(--c-primary)' : 'var(--c-primary-tint)'} />
+        ))}
+      </svg>
+    );
+  }
+  // tpl_operational — vertical bars, ascending queue pressure.
+  const heights = [10, 18, 14, 24, 20];
+  return (
+    <svg viewBox="0 0 64 40" width="52" height="34" aria-hidden>
+      {heights.map((h, i) => (
+        <rect key={i} x={4 + i * 12} y={34 - h} width="8" height={h} rx="1.5" fill={i === 3 ? 'var(--c-primary)' : 'var(--c-primary-tint)'} />
+      ))}
+      <line x1="2" y1="34" x2="62" y2="34" stroke="var(--c-line-strong)" strokeWidth="1.5" />
+    </svg>
+  );
+}
+
+/** What each template pulls in by default, and what it leaves out. */
+function fieldCoverage(templateId, terms) {
+  const seller = titleCase(terms.seller);
+  const buyer = titleCase(terms.buyer);
+  const item = titleCase(terms.item);
+  const order = titleCase(terms.order);
+
+  const table = {
+    tpl_operational: {
+      included: ['Case #', 'Queue', 'Assigned to', 'Due date', 'Status', 'Disputed amount'],
+      optional: ['SLA target', 'Reviewer', 'Assignment reason'],
+    },
+    tpl_reason: {
+      included: ['Reason code', 'Reason category', 'Scheme', 'Case count', 'Disputed amount'],
+      optional: ['Dispute cycle', 'Outcome', 'Card type'],
+    },
+    tpl_recovery: {
+      included: ['Entity', 'Outcome', 'Recovered amount', 'Closed date', 'Case #'],
+      optional: ['Handling minutes', 'Reviewer', 'Write-off reason'],
+    },
+    tpl_marketplace: {
+      included: [item, 'Category', seller, `${seller} rating`, 'Case type'],
+      optional: [buyer, `${order} ID`, 'Carrier'],
+    },
+  };
+
+  return table[templateId] ?? { included: [], optional: [] };
+}
+
+/** Popout: what a template's export includes, with checkboxes to pull in what's missing. */
+function CoveragePanel({ templateId, terms, extra, onToggle, close }) {
+  const { included, optional } = fieldCoverage(templateId, terms);
+
+  return (
+    <div className="stack stack--tight" style={{ padding: 'var(--s-2)' }}>
+      <div>
+        <div className="t-section-label">Included by default</div>
+        <div className="stack stack--xtight" style={{ marginTop: 4 }}>
+          {included.map((f) => (
+            <span key={f} className="row row--xtight small">
+              <Icon name="check" size={12} style={{ color: 'var(--c-success)' }} /> {f}
+            </span>
+          ))}
+        </div>
+      </div>
+      {optional.length > 0 && (
+        <div>
+          <div className="t-section-label">Not included — add if you need it</div>
+          <div className="stack stack--xtight" style={{ marginTop: 4 }}>
+            {optional.map((f) => (
+              <label key={f} className="row row--xtight small" style={{ cursor: 'pointer' }}>
+                <input type="checkbox" className="checkbox" checked={extra.includes(f)} onChange={() => onToggle(f)} />
+                {f}
+              </label>
+            ))}
+          </div>
+        </div>
+      )}
+      <Button variant="secondary" size="sm" onClick={close}>Done</Button>
+    </div>
+  );
+}
 
 function AdvancedSearchModal({ open, onClose, value, onChange }) {
   const set = (patch) => onChange({ ...value, ...patch });
@@ -61,15 +255,22 @@ function ReportBuilder({ onSave }) {
   const [emailOnComplete, setEmailOnComplete] = useState(true);
   const [recipients, setRecipients] = useState([`ops@${brand.emailDomain}`]);
   const [recipientDraft, setRecipientDraft] = useState('');
+  /* Per-template so switching templates doesn't carry one template's extra
+     fields onto another where they may not even apply. */
+  const [extraFields, setExtraFields] = useState({});
+  const toggleExtraField = (tplId, field) => setExtraFields((p) => {
+    const current = p[tplId] ?? [];
+    return { ...p, [tplId]: current.includes(field) ? current.filter((f) => f !== field) : [...current, field] };
+  });
 
   const template = REPORT_TEMPLATES.find((t) => t.id === templateId);
 
   /* The preview is computed from the SCOPED set, not the whole book — the
-     point of a builder is seeing the effect before you schedule it. */
+     point of a builder is seeing the effect before you schedule it. Every
+     template reads that same scope through its OWN lens, so picking a
+     different template changes what the preview actually shows. */
   const scoped = useMemo(() => applyReportScope(CASES, { start, end, filter }), [start, end, filter]);
-  const kpis = useMemo(() => caseKpis(scoped), [scoped]);
-  const byPeriod = useMemo(() => caseActivityPerWeek(scoped, 6), [scoped]);
-  const donut = useMemo(() => reasonCodeDonut(scoped, brand.schemes[0].id, 5), [scoped]);
+  const view = useMemo(() => templateView(templateId, scoped, brand.terms), [templateId, scoped]);
 
   const range = start && end ? `${formatDate(start)} – ${formatDate(end)}` : 'All time';
   const filterLabel = describeFilter(filter);
@@ -190,19 +391,40 @@ function ReportBuilder({ onSave }) {
         <Card title="Choose a template">
           <div className="grid grid--4">
             {REPORT_TEMPLATES.map((t) => (
-              <button key={t.id} type="button" className={`tile ${templateId === t.id ? 'is-selected' : ''}`.trim()} onClick={() => { setTemplateId(t.id); setType(t.type); setGroupBy(t.groupBy); }}>
-                <span className="tile__preview"><Icon name="spreadsheet" size={20} /></span>
-                <span className="small strong">{t.name}</span>
-                <span className="micro subtle">{t.description}</span>
-                {templateId === t.id && <Badge tone="primary">Selected</Badge>}
-              </button>
+              <div key={t.id} className={`tile ${templateId === t.id ? 'is-selected' : ''}`.trim()}>
+                <button type="button" className="tile__hit" onClick={() => { setTemplateId(t.id); setType(t.type); setGroupBy(t.groupBy); }}>
+                  <span className="tile__preview"><TemplateGlyph id={t.id} /></span>
+                  <span className="small strong">{t.name}</span>
+                  <span className="micro subtle">{t.description}</span>
+                  {templateId === t.id && <Badge tone="primary">Selected</Badge>}
+                  {(extraFields[t.id]?.length ?? 0) > 0 && <Badge tone="info">+{extraFields[t.id].length} field{extraFields[t.id].length > 1 ? 's' : ''}</Badge>}
+                </button>
+                <Popover
+                  className="tile__coverage-btn"
+                  align="right"
+                  width={230}
+                  trigger={({ toggle }) => (
+                    <IconButton icon="info" label={`What ${t.name} includes`} size={13} onClick={toggle} />
+                  )}
+                >
+                  {({ close }) => (
+                    <CoveragePanel
+                      templateId={t.id}
+                      terms={brand.terms}
+                      extra={extraFields[t.id] ?? []}
+                      onToggle={(field) => toggleExtraField(t.id, field)}
+                      close={close}
+                    />
+                  )}
+                </Popover>
+              </div>
             ))}
           </div>
         </Card>
 
         <Card
           title="Report preview"
-          action={<Button variant="primary" icon="check" disabled={!name.trim()} onClick={() => { onSave({ name: name.trim(), type, format, mode, frequency, recipients, templateId, groupBy, filter, rowCount: scoped.length }); notify(`Report “${name.trim()}” saved — ${formatNumber(scoped.length)} rows.`, 'success'); setName(''); }}>Save report</Button>}
+          action={<Button variant="primary" icon="check" disabled={!name.trim()} onClick={() => { onSave({ name: name.trim(), type, format, mode, frequency, recipients, templateId, groupBy, filter, extraFields: extraFields[templateId] ?? [], rowCount: scoped.length }); notify(`Report “${name.trim()}” saved — ${formatNumber(scoped.length)} rows.`, 'success'); setName(''); }}>Save report</Button>}
         >
           <div className="stack">
             <div>
@@ -211,6 +433,7 @@ function ReportBuilder({ onSave }) {
                 {range} · Grouped by {groupByLabel} · {template.name} · {format}
                 {mode === 'recurring' ? ` · ${frequency}` : ' · On demand'}
                 {filterLabel && <> · Filtered: {filterLabel}</>}
+                {(extraFields[templateId]?.length ?? 0) > 0 && <> · + {extraFields[templateId].join(', ')}</>}
               </p>
               <p className="micro" style={{ color: scoped.length ? 'var(--c-ink-muted)' : 'var(--c-warning)' }}>
                 <strong className="mono">{formatNumber(scoped.length)}</strong> of{' '}
@@ -220,26 +443,31 @@ function ReportBuilder({ onSave }) {
             </div>
 
             <div className="grid grid--4">
-              <Kpi label="Total cases" value={formatNumber(kpis.total)} />
-              <Kpi label="Represented" value={formatNumber(kpis.represented)} />
-              <Kpi label="Win rate" value={formatPercent(kpis.winRate, 0)} />
-              <Kpi label="Disputed amount" value={formatCompactCurrency(kpis.openValue)} />
+              {view.kpis.map((k) => <Kpi key={k.label} label={k.label} value={k.value} />)}
             </div>
 
             <div className="grid grid--2">
               <div>
-                <span className="t-section-label">Cases by period</span>
-                <BarChart
-                  data={byPeriod}
-                  height={220}
-                  xLabel="Week"
-                  yLabel="Cases"
-                  series={[{ key: 'completed', name: 'Completed' }, { key: 'represented', name: 'Represented' }, { key: 'open', name: 'Open' }]}
-                />
+                <span className="t-section-label">{view.bar.title}</span>
+                {view.bar.data.length ? (
+                  <BarChart
+                    data={view.bar.data}
+                    height={220}
+                    xLabel={view.bar.xLabel}
+                    yLabel={view.bar.yLabel}
+                    series={view.bar.series}
+                  />
+                ) : (
+                  <p className="small subtle" style={{ padding: 'var(--s-4) 0' }}>Nothing in scope for this view.</p>
+                )}
               </div>
               <div>
-                <span className="t-section-label">By reason code</span>
-                <Donut data={donut.slices} centreValue={formatNumber(donut.total)} centreLabel={brand.schemes[0].label} size={170} />
+                <span className="t-section-label">{view.donut.title}</span>
+                {view.donut.slices.length ? (
+                  <Donut data={view.donut.slices} centreValue={formatNumber(view.donut.total)} centreLabel={view.donut.centreLabel} size={170} />
+                ) : (
+                  <p className="small subtle" style={{ padding: 'var(--s-4) 0' }}>Nothing in scope for this view.</p>
+                )}
               </div>
             </div>
           </div>

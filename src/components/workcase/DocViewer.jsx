@@ -18,15 +18,22 @@ import { formatCurrency, formatDate, titleCase } from '@/utils/format';
 
 function Letterhead({ brand, title }) {
   return (
-    <div className="doc-page__brand">
-      <span className="doc-page__logo">
-        <img src={brand.logo} alt="" width={16} height={16} style={{ borderRadius: 3 }} />
-        {brand.name}
-      </span>
-      <span className="doc-page__meta">
-        {title}<br />
-        {brand.legalName}
-      </span>
+    <div className="doc-page__head">
+      <div className="doc-page__brand">
+        <span className="doc-page__logo">
+          <img src={brand.logo} alt="" width={16} height={16} style={{ borderRadius: 3 }} />
+          {brand.name}
+        </span>
+        <span className="doc-page__meta">
+          {title}<br />
+          {brand.legalName}
+        </span>
+      </div>
+      {(brand.department || brand.address) && (
+        <div className="doc-page__addr">
+          {[brand.department, brand.address].filter(Boolean).join(' · ')}
+        </div>
+      )}
     </div>
   );
 }
@@ -100,24 +107,37 @@ function SalesReceipt({ c, brand }) {
     <>
       <Letterhead brand={brand} title="SALES RECEIPT" />
       <p className="doc-page__re">Order {c.orderId}</p>
+
       <table className="doc-page__table">
         <tbody>
           <tr><td>Order placed</td><td>{formatDate(c.orderPlacedAt)}</td></tr>
           <tr><td>{titleCase(brand.terms.buyer)}</td><td>{c.buyer}</td></tr>
           <tr><td>{titleCase(brand.terms.seller)}</td><td>{c.seller}</td></tr>
-          <tr><td>Item</td><td>{c.itemTitle}</td></tr>
-          <tr><td>Condition</td><td>{c.itemCondition}</td></tr>
-          <tr><td>Item price</td><td>{formatCurrency(c.itemPrice, c.currency)}</td></tr>
-          <tr><td>Postage</td><td>{formatCurrency(c.shipping, c.currency)}</td></tr>
-          <tr><td><strong>Total paid</strong></td><td><strong>{formatCurrency(c.caseAmount, c.currency)}</strong></td></tr>
           <tr><td>Payment method</td><td>{c.paymentMethod}</td></tr>
           <tr><td>Entity</td><td>{c.entityLabel}</td></tr>
         </tbody>
       </table>
-      <p>Payment captured in full. No refund has been issued against this order.</p>
-      <div className="doc-page__sig doc-page__meta" style={{ textAlign: 'left' }}>
-        Receipt generated for dispute {c.id}
-      </div>
+
+      <table className="doc-page__items">
+        <thead>
+          <tr><th>Description</th><th>Amount</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>{c.itemTitle}<br /><span className="doc-page__meta" style={{ textAlign: 'left' }}>Condition: {c.itemCondition}</span></td>
+            <td>{formatCurrency(c.itemPrice, c.currency)}</td>
+          </tr>
+          <tr><td>Postage</td><td>{formatCurrency(c.shipping, c.currency)}</td></tr>
+        </tbody>
+        <tfoot>
+          <tr><td>Total paid</td><td>{formatCurrency(c.caseAmount, c.currency)}</td></tr>
+        </tfoot>
+      </table>
+
+      <p className="doc-page__foot-note">
+        Payment captured in full · No refund has been issued against this order.<br />
+        Receipt generated for dispute {c.id}.
+      </p>
     </>
   );
 }

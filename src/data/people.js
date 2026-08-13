@@ -91,6 +91,12 @@ const SEED = [
   { id: 'u10', name: 'Anouk Bakker', roleId: 'analyst', group: 'Main Group', status: 'Active', confirmation: 'Confirmed', startDate: '2022-06-23', market: 'NL' },
   { id: 'u11', name: 'Hugo Ferreira', roleId: 'analyst', group: 'Weekend Cover', status: 'Active', confirmation: 'Confirmed', startDate: '2023-02-15', market: 'PT' },
   { id: 'u12', name: 'Marta Ortega', roleId: 'analyst', group: 'Weekend Cover', status: 'Active', confirmation: 'Confirmed', startDate: '2023-09-01', market: 'ES' },
+  // Leadership — full access, no case-queue rotation, hence roleId 'admin' throughout.
+  { id: 'u13', name: 'Kristofs Blaus', roleId: 'admin', group: '-', status: 'Active', confirmation: 'Confirmed', startDate: '2018-01-15', market: 'LV' },
+  { id: 'u14', name: 'Egija Seile', roleId: 'admin', group: '-', status: 'Active', confirmation: 'Confirmed', startDate: '2018-03-01', market: 'LV' },
+  { id: 'u15', name: 'Elina Balode', roleId: 'admin', group: '-', status: 'Active', confirmation: 'Confirmed', startDate: '2018-06-01', market: 'LV' },
+  { id: 'u16', name: 'Vladimirs Budkins', roleId: 'admin', group: '-', status: 'Active', confirmation: 'Confirmed', startDate: '2019-01-15', market: 'LV' },
+  { id: 'u17', name: 'Martin Spengler', roleId: 'admin', group: '-', status: 'Active', confirmation: 'Confirmed', startDate: '2021-05-01', market: 'LV' },
 ];
 
 export const USERS = SEED.map((u, i) => ({

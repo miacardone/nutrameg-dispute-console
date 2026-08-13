@@ -52,29 +52,52 @@ export function ApiDocumentation() {
       <PageHeader title="API documentation" description="The endpoints behind this console — request and response schemas, error codes and samples." />
 
       <div className="grid" style={{ gridTemplateColumns: 'minmax(220px, 280px) minmax(0, 1fr)', alignItems: 'start' }}>
-        <Card title="Endpoints" bodyClassName="card__body--tight">
-          {API_GROUPS.map((group) => {
-            const items = API_ENDPOINTS.filter((e) => e.group === group);
-            if (!items.length) return null;
-            return (
-              <div key={group} style={{ marginBottom: 'var(--s-3)' }}>
-                <div className="t-section-label" style={{ padding: '0 var(--s-2) var(--s-1)' }}>{group}</div>
-                {items.map((e) => (
-                  <button
-                    key={e.id}
-                    type="button"
-                    className="popover__item"
-                    style={e.id === activeId ? { background: 'var(--c-primary-tint)', color: 'var(--c-primary-deep)', fontWeight: 600 } : undefined}
-                    onClick={() => setActiveId(e.id)}
-                  >
-                    <span className={`method method--${e.method.toLowerCase()}`}>{e.method}</span>
-                    <span className="mono micro truncate">{e.path}</span>
-                  </button>
+        <div className="stack stack--tight">
+          <Card title="Endpoints" bodyClassName="card__body--tight">
+            {API_GROUPS.map((group) => {
+              const items = API_ENDPOINTS.filter((e) => e.group === group);
+              if (!items.length) return null;
+              return (
+                <div key={group} style={{ marginBottom: 'var(--s-3)' }}>
+                  <div className="t-section-label" style={{ padding: '0 var(--s-2) var(--s-1)' }}>{group}</div>
+                  {items.map((e) => (
+                    <button
+                      key={e.id}
+                      type="button"
+                      className="popover__item"
+                      style={e.id === activeId ? { background: 'var(--c-primary-tint)', color: 'var(--c-primary-deep)', fontWeight: 600 } : undefined}
+                      onClick={() => setActiveId(e.id)}
+                    >
+                      <span className={`method method--${e.method.toLowerCase()}`}>{e.method}</span>
+                      <span className="mono micro truncate">{e.path}</span>
+                    </button>
+                  ))}
+                </div>
+              );
+            })}
+          </Card>
+
+          {endpoint.errors?.length > 0 && (
+            <Card title="Error codes" bodyClassName="card__body--tight">
+              <div className="stack stack--xtight">
+                {endpoint.errors.map((err) => (
+                  <div key={err.code} className="row row--tight row--top" style={{ padding: 'var(--s-1) var(--s-2)' }}>
+                    <Badge tone={err.code >= 500 ? 'danger' : 'warning'}>{err.code}</Badge>
+                    <span className="micro subtle">{err.meaning}</span>
+                  </div>
                 ))}
               </div>
-            );
-          })}
-        </Card>
+            </Card>
+          )}
+
+          <Card title={AUTH_NOTE.title} bodyClassName="card__body--tight">
+            <div className="stack stack--tight" style={{ padding: 'var(--s-1) var(--s-2)' }}>
+              <p className="micro muted">{AUTH_NOTE.body}</p>
+              <pre className="code" style={{ fontSize: 'var(--fs-micro)' }}>{AUTH_NOTE.sample}</pre>
+              <span className="row row--xtight micro subtle"><Icon name="lock" size={12} />Tokens are tenant-scoped.</span>
+            </div>
+          </Card>
+        </div>
 
         <div className="stack stack--tight">
           <Card>
@@ -109,27 +132,6 @@ export function ApiDocumentation() {
             <div className="stack stack--tight">
               <Badge tone="success">200 OK</Badge>
               <pre className="code">{sample}</pre>
-            </div>
-          </Card>
-
-          {endpoint.errors?.length > 0 && (
-            <Card title="Error codes" bodyClassName="card__body--flush">
-              <DataTable
-                columns={[
-                  { key: 'code', header: 'Code', fw: 4, cell: (r) => <Badge tone={r.code >= 500 ? 'danger' : 'warning'}>{r.code}</Badge> },
-                  { key: 'meaning', header: 'Meaning', fw: 20, cell: (r) => <span className="small muted">{r.meaning}</span> },
-                ]}
-                rows={endpoint.errors}
-                rowKey={(r) => String(r.code)}
-              />
-            </Card>
-          )}
-
-          <Card title={AUTH_NOTE.title}>
-            <div className="stack stack--tight">
-              <p className="small muted">{AUTH_NOTE.body}</p>
-              <pre className="code">{AUTH_NOTE.sample}</pre>
-              <span className="row row--xtight micro subtle"><Icon name="lock" size={12} />Tokens are tenant-scoped.</span>
             </div>
           </Card>
         </div>
